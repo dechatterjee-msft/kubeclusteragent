@@ -1,0 +1,50 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  imagePullPolicy: "Never"
+  kubeletExtraArgs:
+    pod-infra-container-image: pause:3.9
+    node-ip: 100.102.1.1,2001:db8::1
+localAPIEndpoint:
+  advertiseAddress: "100.102.1.1"
+  bindPort: 6443
+---
+kind: ClusterConfiguration
+apiVersion: kubeadm.k8s.io/v1beta3
+imageRepository: registry.k8s.io
+kubernetesVersion: v1.26.5+
+clusterName: tca-snc-dual
+controlPlaneEndpoint: "100.102.1.1:6443"
+
+controllerManager:
+  extraArgs:
+    leader-elect: "false"
+    profiling: "false"
+    node-cidr-mask-size-ipv6: "112"
+scheduler:
+  extraArgs:
+    leader-elect: "false"
+    profiling: "false"
+dns:
+  imageRepository: registry.k8s.io
+  imageTag: v1.10.1
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+    extraArgs:
+      cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+    imageRepository: registry.k8s.io
+    imageTag: v3.5.7
+networking:
+  podSubnet: "100.100.0.0/16,2001:db8:1::/112"
+  serviceSubnet: "100.101.0.0/16,2001:db8:2::/112"
+apiServer:
+  extraArgs:
+    profiling: "false"
+---
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+imageGCHighThresholdPercent: 100
+imageGCLowThresholdPercent: 99
+evictionHard:
+  "imagefs.available": "0%"

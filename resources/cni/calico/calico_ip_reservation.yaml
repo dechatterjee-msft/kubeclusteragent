@@ -1,0 +1,8 @@
+apiVersion: crd.projectcalico.org/v1
+kind: IPReservation
+metadata:
+  name: snc-pod-cidr-reserved-pool
+spec:
+  reservedCIDRs:
+    - 100.100.0.0/24
+    - 2001:db8:1::/120

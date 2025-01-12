@@ -1,0 +1,39 @@
+---
+# Example cluster resource
+apiVersion: v1alpha1
+kind: Cluster
+spec:
+  # The version of Kubernetes
+  version: 1.23.0
+  # The type of cluster. Initially, support for kubeadm
+  # is provided, but this support is extendable to k3s,k0s
+  clusterType: kubeadm
+  # Disables the ability for the cluster to run workloads.
+  disableWorkloads: false
+  clusterParameters:
+    apiServer:
+      # Additional SANs to configure for the api-server's
+      certSANs:
+        - 34.66.72.135
+    networking:
+      # Subnet to use for pod networking
+      podSubnet: 10.244.0.0/16
+      # Subnet to use for service networking
+      svcSubnet: 10.245.0.0/16
+    cni:
+      # The type of CNI to install. This is not changeable
+      # once a cluster is installed.
+      type: calico
+      # The version of the CNI to install. This is changeable
+      # after the cluster is installed.
+      version: 1.53.1
+status:
+  # machine readable description of the current status
+  # possible values: not-initalized, installing, installed,
+  #   disabled, install-failed, destroying
+  currentStatus: provisioned
+  # human readble description of why the server has the
+  # current status
+  description: Cluster is installed and available
+  # The current installed version of Kubernetes
+  currentVersion: 1.23.0

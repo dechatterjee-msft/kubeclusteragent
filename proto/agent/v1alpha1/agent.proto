@@ -1,0 +1,456 @@
+syntax = "proto3";
+package agent.v1alpha1;
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
+import "google/api/field_behavior.proto";
+
+option go_package = "kubeclusteragent/gen/go/widget/v1alpha1";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "kubeclusteragent";
+    version: "1.0.0";
+    contact: {
+      name: "Debankur Chatterjee";
+      email: "";
+    };
+  };
+  host: "localhost:8080";
+  schemes: HTTP;
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  security_definitions: {
+    security: {
+      key: "BasicAuth";
+      value: {
+        type: TYPE_BASIC;
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "BasicAuth";
+      value: {};
+    }
+  }
+  responses: {
+    key: "403";
+    value: {
+      description: "Returned when the user does not have permission to access the resource.";
+    }
+  }
+  responses: {
+    key: "404";
+    value: {
+      description: "Returned when the resource does not exist.";
+      schema: {
+        json_schema: {
+          type: STRING;
+        }
+      }
+    }
+  }
+};
+
+
+// API for the War Machine agent, a single node Kubernetes cluster.
+service AgentAPI {
+  // Get the current cluster configuration.
+  rpc GetCluster(GetClusterRequest) returns (Cluster) {
+    option (google.api.http) = {
+      get: "/api/v1alpha1/cluster"
+    };
+  }
+
+  // Create a single node cluster.
+  rpc CreateCluster(CreateClusterRequest) returns (Cluster) {
+    option (google.api.http) = {
+      post: "/api/v1alpha1/cluster"
+      body: "*"
+    };
+  }
+
+  // Upgrade a single node cluster.
+    rpc UpgradeCluster(UpgradeClusterRequest) returns (Cluster) {
+      option (google.api.http) = {
+        put: "/api/v1alpha1/cluster"
+        body: "*"
+      };
+    }
+
+  // Patch a single node cluster.
+  rpc PatchCluster(PatchClusterRequest) returns (Cluster) {
+    option (google.api.http) = {
+      patch: "/api/v1alpha1/cluster"
+      body: "*"
+    };
+  }
+
+  // Remove the current cluster from the node. This resets the node back to its pristine state.
+  rpc DeleteCluster(DeleteClusterRequest) returns (Cluster) {
+    option(google.api.http) = {
+      delete: "/api/v1alpha1/cluster"
+    };
+  }
+
+  // Series of operations performed on the cluster
+  rpc AuditHistory(AuditHistoryRequest) returns (AuditHistoryResponse) {
+    option(google.api.http) = {
+      get: "/api/v1alpha1/cluster/audit"
+    };
+  }
+
+  // Get the cluster's kubeconfig. This is available after a cluster has been initialized.
+  rpc GetKubeconfig(GetKubeconfigRequest) returns (Kubeconfig) {
+    option (google.api.http) = {
+      get: "/api/v1alpha1/kubeconfig"
+    };
+  }
+
+  // Rotate Cluster Certs. This is available after a cluster has been initialized.
+  rpc ResetCerts(ResetKubeconfigRequest) returns (ResetKubeconfigRequest) {
+    option (google.api.http) = {
+      delete: "/api/v1alpha1/certs"
+    };
+  }
+
+  // Get certificate expiry for Kubernetes controlplane certificates
+  rpc GetCerts(ClusterCertificateRequest) returns (ClusterCertificatesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1alpha1/certs"
+    };
+  }
+  // Get the status of cluster reconciler
+  rpc GetReconcilerRequest(GetClusterStatusReconcilerRequest) returns(GetClusterStatusReconcilerResponse){
+    option (google.api.http) = {
+      get: "/api/v1alpha1/reconciler"
+    };
+  }
+}
+
+message ExecuteScriptRequest{
+   string script_name = 1;
+   string script_path = 2;
+   string params = 3;
+}
+
+message ExecuteScriptResponse{
+  google.protobuf.Value response = 1;
+}
+
+// Contains configuration for the cluster's API server.
+message ClusterAPIServer {
+  // Additional certificate SANs.
+  repeated string certSANs = 1;
+}
+
+// Contains configuration for cluster networking.
+message ClusterNetworking {
+  // The pod subnet. This is not changeable after the cluster has been initialized.
+  string podSubnet = 1;
+  // The service subnet is not changeable after the cluster has been initialized.
+  string svcSubnet = 2;
+ // Container Networking will be used to setup the network between k8s workloads
+  // Cni manifest URL
+  string cniManifestURL = 3;
+  // Cni manifest
+//  string cniManifest = 5;
+//  // Example: 'https://github.com/k8snetworkplumbingwg/multus-cni/blob/v3.9/deployments/multus-daemonset-thick-plugin.yml'
+//  string metaCNIManifestURL = 6;
+//  // The metaCNI manifest in base64 encoding
+//  string metaCNIManifest = 7;
+}
+
+
+message ClusterStorage{
+  // ContainerStorageInterface will be used to provision container storage
+  ContainerStorageInterface clusterCsi = 1;
+}
+
+message ClusterRuntime {
+  // as on v1alpha1 only private registry configuration is available
+   bool customiseClusterRuntime = 1;
+  // ContainerRuntimeInterface will be used to provision container storage
+   ContainerRuntimeInterface clusterCri = 2;
+}
+
+// Represents a cluster's specification.
+message ClusterSpec {
+  // Type of Kubernetes Cluster example k0s,kubeadm,k3s,microK8s or tiny-kube default will be kubeadm
+  string clusterType = 1;
+  // clusterName
+  string clusterName = 2;
+  // Contains configuration for cluster networking.
+  ClusterNetworking networking = 3;
+  // Cluster storage
+  ClusterStorage storage = 4;
+  // Contains configuration for the cluster's API server.
+  ClusterAPIServer apiServer = 5;
+  // The Kubernetes version to install on the cluster.
+  string version = 6;
+  // Disables the ability for the cluster to run workloads.
+  optional bool disableWorkloads = 7 ;
+  // Extra args for K3s based cluster's
+  map<string,string> extraArgs = 8;
+  // Cluster Container Runtime
+  ClusterRuntime clusterRuntime = 9;
+}
+
+message AuditHistoryResponse{
+  // Series of operation performed
+  repeated Operations operations = 1;
+}
+
+message Operations{
+  // Operation type can be Install , Upgrade , Patch and Delete
+  string operation = 1;
+  // Condition status can be Running , Completed and Failed
+  string Status = 2;
+  // Last time when condition was executed
+  // For failed operation what is the failure reason
+  string reason = 3;
+  // Human readable description of the condition
+  string message = 4;
+  // Last time when operation was executed
+  google.protobuf.Timestamp lastExecuted = 5;
+  // Type of cluster e.g. kubeadm,k3s or k0s
+  string clusterType = 6;
+  // Current version of cluster type
+  string currentVersion = 7;
+}
+
+
+
+
+
+// A cluster
+message Cluster {
+  // The API version for the object.
+  string apiVersion = 1;
+  // The kind of object.
+  string kind = 2;
+  // Represents a cluster's specification.
+  ClusterSpec spec = 3;
+  // The status of the cluster.
+  ClusterStatus status = 4;
+}
+
+// A request to retrieve a cluster.
+message GetClusterRequest {
+}
+
+message Reconciler{
+  // The name of the reconciler
+   string name = 1;
+  // The status of the reconciler
+   string status = 2;
+}
+
+message GetClusterStatusReconcilerRequest{}
+
+
+message GetClusterStatusReconcilerResponse{
+    Reconciler reconciler = 1;
+}
+
+// A request to create a cluster.
+message CreateClusterRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Create cluster"
+      description: "Creates a Kubernetes cluster on the server."
+                   " in cluster spec if networking and storage options are not passed default options will be considered \n"
+                   " Pod-Subnet: 10.100.0.0/16 \n"
+                   " Service-Subnet: 10.101.0.0/16 \n"
+                   " CNI: Calico \n"
+                   " CSI: local-path-storage \n"
+      required: [
+        "apiVersion",
+        "kind",
+        "spec"
+      ]
+    }
+    example: "{\n    \"apiVersion\": \"v1alpha1\",\n    \"kind\": \"Cluster\",\n    \"spec\": {\n        \"clusterType\": \"kubeadm\",\n        \"networking\": {\n            \"podSubnet\": \"100.100.0.0/16\",\n            \"svcSubnet\": \"100.101.0.0/16\",\n            \"clusterCni\": {\n                \"name\": \"calico\",\n                \"version\": \"v3.25.1\"\n            }\n        },\n        \"storage\": {\n            \"clusterCsi\": {\n                \"name\": \"local-path-storage\",\n                \"version\": \"v0.0.24\"\n            }\n        },\n        \"apiServer\": {},\n        \"version\": \"v1.24.14+\",\n        \"disableWorkloads\": false\n    }\n}"
+  };
+
+  // The API version for the object.
+  //
+  // Required Value: `v1alpha1`
+  string apiVersion = 1;
+  // The kind of object.
+  //
+  // Required Value: `Cluster`
+  string kind = 2;
+  // Represents a cluster's specification.
+  ClusterSpec spec = 3;
+}
+
+// A request to upgrade a cluster.
+message UpgradeClusterRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Upgrade cluster"
+      description:  "Upgrades a Kubernetes cluster on the server,"
+                    "user need to provide the target version of the cluster,during upgrade only cluster version change is supported"
+      required: [
+        "apiVersion",
+        "kind",
+        "spec"
+      ]
+    }
+    example: "{\n    \"apiVersion\": \"v1alpha1\",\n    \"kind\": \"Cluster\",\n    \"spec\": {\n        \"clusterType\": \"kubeadm\",\n        \"networking\": {\n            \"podSubnet\": \"100.100.0.0/16\",\n            \"svcSubnet\": \"100.101.0.0/16\",\n            \"clusterCni\": {\n                \"name\": \"calico\",\n                \"version\": \"v3.25.1\"\n            }\n        },\n        \"storage\": {\n            \"clusterCsi\": {\n                \"name\": \"local-path-storage\",\n                \"version\": \"v0.0.24\"\n            }\n        },\n        \"apiServer\": {},\n        \"version\": \"v1.24.14+\",\n        \"disableWorkloads\": false\n    }\n}"
+  };
+
+  // The API version for the object.
+  //
+  // Required Value: `v1alpha1`
+  string apiVersion = 1;
+  // The kind of object.
+  //
+  // Required Value: `Cluster`
+  string kind = 2;
+  // Spec for upgrading the cluster
+  ClusterSpec spec = 3;
+}
+
+// Change the Cluster
+message PatchClusterRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Patch cluster"
+      description: "Patch the exiting cluster with new cluster object."
+      required: [
+        "apiVersion",
+        "kind",
+        "spec"
+      ]
+    }
+    external_docs: {
+      url: "https://github.com/grpc-ecosystem/grpc-gateway";
+      description: "Find out more about ABitOfEverything";
+    }
+    example: ""
+  };
+
+  // The API version for the object.
+  //
+  // Required Value: `v1alpha1`
+  string apiVersion = 1;
+  // The kind of object.
+  //
+  // Required Value: `Cluster`
+  string kind = 2;
+  // Spec for upgrading the cluster
+  ClusterSpec spec = 3;
+}
+
+// A request to delete (reset) a cluster.
+message DeleteClusterRequest {
+}
+
+// A request to get the kubeconfig for the cluster.
+message GetKubeconfigRequest {}
+
+// A kubeconfig.
+message Kubeconfig {
+  // The contents of a kubeconfig file.
+  string contents = 1;
+}
+
+// A request to set the cluster's kubeconfig.
+message ResetKubeconfigRequest {}
+
+message ClusterCertificateRequest {}
+
+message certsInfo{
+   string name = 1;
+   int64 remainingDaysToExpire = 2;
+   string expiryDate = 3;
+   string rotationDate = 4;
+}
+message ClusterCertificatesResponse {
+  repeated certsInfo CertsInfo = 1;
+}
+
+
+// A request to get the audit history
+message AuditHistoryRequest{}
+
+message ClusterStatus {
+  string kubernetesVersion = 1;
+  string cniVersion = 2;
+  string phase = 3;
+  bool unschedulable = 4;
+  repeated Condition conditions = 5;
+}
+
+
+message CustomizationStatus {
+  repeated Condition conditions = 1;
+}
+
+message Status {
+  ClusterStatus ClusterStatus = 1;
+  CustomizationStatus CustomizationStatus = 2;
+}
+
+enum ConditionType {
+  Unknown = 0;
+  ClusterReady = 1;
+  ControlPlaneReady = 2;
+  NodeReady = 3;
+  CniAddonReady = 4;
+  PackageReady = 5;
+  UpgradeSuccess = 6;
+  DeleteSuccess = 7;
+  InstallSuccess = 8;
+}
+
+message Condition {
+  ConditionType type = 1;
+  string status = 2;
+  google.protobuf.Timestamp lastTransitionTime = 3;
+  string reason = 4;
+  string message  = 5;
+  string severity = 6;
+}
+
+message ContainerNetworkInterface{
+    string name = 1;
+    string version = 2;
+    string metaCniName = 3;
+    string metaCniVersion = 4;
+}
+
+message ContainerStorageInterface{
+  string name = 1;
+  string version = 2;
+}
+
+message ContainerRuntimeInterface{
+  // example https://gcr.io
+   repeated string privateRegistryEndpoints = 1;
+  // example gcr.io/registry
+   string privateRegistryFQDN = 2;
+   // insecure verify
+  bool skipTls = 3;
+  // Registry authentication
+  RegistryAuth registryAuth = 4;
+  // Cert files
+  repeated string certFiles = 5;
+
+}
+
+message RegistryAuth {
+  bool isAuthRequired = 1;
+  // username
+  string username = 2;
+  // password
+  string password = 3;
+}

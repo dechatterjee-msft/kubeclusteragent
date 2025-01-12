@@ -1,0 +1,911 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "kubeclusteragent",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Debankur Chatterjee"
+    }
+  },
+  "tags": [
+    {
+      "name": "AgentAPI"
+    }
+  ],
+  "host": "localhost:8080",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1alpha1/certs": {
+      "get": {
+        "summary": "Get certificate expiry for Kubernetes controlplane certificates",
+        "operationId": "AgentAPI_GetCerts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1ClusterCertificatesResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AgentAPI"
+        ]
+      },
+      "delete": {
+        "summary": "Rotate Cluster Certs. This is available after a cluster has been initialized.",
+        "operationId": "AgentAPI_ResetCerts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1ResetKubeconfigRequest"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AgentAPI"
+        ]
+      }
+    },
+    "/api/v1alpha1/cluster": {
+      "get": {
+        "summary": "Get the current cluster configuration.",
+        "operationId": "AgentAPI_GetCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1Cluster"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AgentAPI"
+        ]
+      },
+      "delete": {
+        "summary": "Remove the current cluster from the node. This resets the node back to its pristine state.",
+        "operationId": "AgentAPI_DeleteCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1Cluster"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AgentAPI"
+        ]
+      },
+      "post": {
+        "summary": "Create a single node cluster.",
+        "operationId": "AgentAPI_CreateCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1Cluster"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Creates a Kubernetes cluster on the server. in cluster spec if networking and storage options are not passed default options will be considered \n Pod-Subnet: 10.100.0.0/16 \n Service-Subnet: 10.101.0.0/16 \n CNI: Calico \n CSI: local-path-storage \n",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1alpha1CreateClusterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AgentAPI"
+        ]
+      },
+      "put": {
+        "summary": "Upgrade a single node cluster.",
+        "operationId": "AgentAPI_UpgradeCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1Cluster"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Upgrades a Kubernetes cluster on the server,user need to provide the target version of the cluster,during upgrade only cluster version change is supported",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1alpha1UpgradeClusterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AgentAPI"
+        ]
+      },
+      "patch": {
+        "summary": "Patch a single node cluster.",
+        "operationId": "AgentAPI_PatchCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1Cluster"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Patch the exiting cluster with new cluster object.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1alpha1PatchClusterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AgentAPI"
+        ]
+      }
+    },
+    "/api/v1alpha1/cluster/audit": {
+      "get": {
+        "summary": "Series of operations performed on the cluster",
+        "operationId": "AgentAPI_AuditHistory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1AuditHistoryResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AgentAPI"
+        ]
+      }
+    },
+    "/api/v1alpha1/kubeconfig": {
+      "get": {
+        "summary": "Get the cluster's kubeconfig. This is available after a cluster has been initialized.",
+        "operationId": "AgentAPI_GetKubeconfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1Kubeconfig"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AgentAPI"
+        ]
+      }
+    },
+    "/api/v1alpha1/reconciler": {
+      "get": {
+        "summary": "Get the status of cluster reconciler",
+        "operationId": "AgentAPI_GetReconcilerRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1alpha1GetClusterStatusReconcilerResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AgentAPI"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string",
+          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com. As of May 2023, there are no widely used type server\nimplementations and no plans to implement one.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
+        }
+      },
+      "additionalProperties": {},
+      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n    // or ...\n    if (any.isSameTypeAs(Foo.getDefaultInstance())) {\n      foo = any.unpack(Foo.getDefaultInstance());\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := \u0026pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.name' as the type URL and the unpack\nmethods only use the fully qualified type name after the last '/'\nin the type URL, for example \"foo.bar.com/x/y.z\" will yield type\nname \"y.z\".\n\nJSON\n====\nThe JSON representation of an `Any` value uses the regular\nrepresentation of the deserialized, embedded message, with an\nadditional field `@type` which contains the type URL. Example:\n\n    package google.profile;\n    message Person {\n      string first_name = 1;\n      string last_name = 2;\n    }\n\n    {\n      \"@type\": \"type.googleapis.com/google.profile.Person\",\n      \"firstName\": \u003cstring\u003e,\n      \"lastName\": \u003cstring\u003e\n    }\n\nIf the embedded message type is well-known and has a custom JSON\nrepresentation, that representation will be embedded adding a field\n`value` which holds the custom JSON in addition to the `@type`\nfield. Example (for message [google.protobuf.Duration][]):\n\n    {\n      \"@type\": \"type.googleapis.com/google.protobuf.Duration\",\n      \"value\": \"1.212s\"\n    }"
+    },
+    "v1alpha1AuditHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1alpha1Operations"
+          },
+          "title": "Series of operation performed"
+        }
+      }
+    },
+    "v1alpha1Cluster": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "description": "The API version for the object."
+        },
+        "kind": {
+          "type": "string",
+          "description": "The kind of object."
+        },
+        "spec": {
+          "$ref": "#/definitions/v1alpha1ClusterSpec",
+          "description": "Represents a cluster's specification."
+        },
+        "status": {
+          "$ref": "#/definitions/v1alpha1ClusterStatus",
+          "description": "The status of the cluster."
+        }
+      },
+      "title": "A cluster"
+    },
+    "v1alpha1ClusterAPIServer": {
+      "type": "object",
+      "properties": {
+        "certSANs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional certificate SANs."
+        }
+      },
+      "description": "Contains configuration for the cluster's API server."
+    },
+    "v1alpha1ClusterCertificatesResponse": {
+      "type": "object",
+      "properties": {
+        "CertsInfo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1alpha1certsInfo"
+          }
+        }
+      }
+    },
+    "v1alpha1ClusterNetworking": {
+      "type": "object",
+      "properties": {
+        "podSubnet": {
+          "type": "string",
+          "description": "The pod subnet. This is not changeable after the cluster has been initialized."
+        },
+        "svcSubnet": {
+          "type": "string",
+          "description": "The service subnet is not changeable after the cluster has been initialized."
+        },
+        "cniManifestURL": {
+          "type": "string",
+          "description": "Cni manifest\n  string cniManifest = 5;\n  // Example: 'https://github.com/k8snetworkplumbingwg/multus-cni/blob/v3.9/deployments/multus-daemonset-thick-plugin.yml'\n  string metaCNIManifestURL = 6;\n  // The metaCNI manifest in base64 encoding\n  string metaCNIManifest = 7;",
+          "title": "Container Networking will be used to setup the network between k8s workloads\nCni manifest URL"
+        }
+      },
+      "description": "Contains configuration for cluster networking."
+    },
+    "v1alpha1ClusterRuntime": {
+      "type": "object",
+      "properties": {
+        "customiseClusterRuntime": {
+          "type": "boolean",
+          "title": "as on v1alpha1 only private registry configuration is available"
+        },
+        "clusterCri": {
+          "$ref": "#/definitions/v1alpha1ContainerRuntimeInterface",
+          "title": "ContainerRuntimeInterface will be used to provision container storage"
+        }
+      }
+    },
+    "v1alpha1ClusterSpec": {
+      "type": "object",
+      "properties": {
+        "clusterType": {
+          "type": "string",
+          "title": "Type of Kubernetes Cluster example k0s,kubeadm,k3s,microK8s or tiny-kube default will be kubeadm"
+        },
+        "clusterName": {
+          "type": "string",
+          "title": "clusterName"
+        },
+        "networking": {
+          "$ref": "#/definitions/v1alpha1ClusterNetworking",
+          "description": "Contains configuration for cluster networking."
+        },
+        "storage": {
+          "$ref": "#/definitions/v1alpha1ClusterStorage",
+          "title": "Cluster storage"
+        },
+        "apiServer": {
+          "$ref": "#/definitions/v1alpha1ClusterAPIServer",
+          "description": "Contains configuration for the cluster's API server."
+        },
+        "version": {
+          "type": "string",
+          "description": "The Kubernetes version to install on the cluster."
+        },
+        "disableWorkloads": {
+          "type": "boolean",
+          "description": "Disables the ability for the cluster to run workloads."
+        },
+        "extraArgs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Extra args for K3s based cluster's"
+        },
+        "clusterRuntime": {
+          "$ref": "#/definitions/v1alpha1ClusterRuntime",
+          "title": "Cluster Container Runtime"
+        }
+      },
+      "description": "Represents a cluster's specification."
+    },
+    "v1alpha1ClusterStatus": {
+      "type": "object",
+      "properties": {
+        "kubernetesVersion": {
+          "type": "string"
+        },
+        "cniVersion": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "unschedulable": {
+          "type": "boolean"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1alpha1Condition"
+          }
+        }
+      }
+    },
+    "v1alpha1ClusterStorage": {
+      "type": "object",
+      "properties": {
+        "clusterCsi": {
+          "$ref": "#/definitions/v1alpha1ContainerStorageInterface",
+          "title": "ContainerStorageInterface will be used to provision container storage"
+        }
+      }
+    },
+    "v1alpha1Condition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/v1alpha1ConditionType"
+        },
+        "status": {
+          "type": "string"
+        },
+        "lastTransitionTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1ConditionType": {
+      "type": "string",
+      "enum": [
+        "Unknown",
+        "ClusterReady",
+        "ControlPlaneReady",
+        "NodeReady",
+        "CniAddonReady",
+        "PackageReady",
+        "UpgradeSuccess",
+        "DeleteSuccess",
+        "InstallSuccess"
+      ],
+      "default": "Unknown"
+    },
+    "v1alpha1ContainerRuntimeInterface": {
+      "type": "object",
+      "properties": {
+        "privateRegistryEndpoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "example https://gcr.io"
+        },
+        "privateRegistryFQDN": {
+          "type": "string",
+          "title": "example gcr.io/registry"
+        },
+        "skipTls": {
+          "type": "boolean",
+          "title": "insecure verify"
+        },
+        "registryAuth": {
+          "$ref": "#/definitions/v1alpha1RegistryAuth",
+          "title": "Registry authentication"
+        },
+        "certFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Cert files"
+        }
+      }
+    },
+    "v1alpha1ContainerStorageInterface": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "v1alpha1CreateClusterRequest": {
+      "type": "object",
+      "example": {
+        "apiVersion": "v1alpha1",
+        "kind": "Cluster",
+        "spec": {
+          "clusterType": "kubeadm",
+          "networking": {
+            "podSubnet": "100.100.0.0/16",
+            "svcSubnet": "100.101.0.0/16",
+            "clusterCni": {
+              "name": "calico",
+              "version": "v3.25.1"
+            }
+          },
+          "storage": {
+            "clusterCsi": {
+              "name": "local-path-storage",
+              "version": "v0.0.24"
+            }
+          },
+          "apiServer": {},
+          "version": "v1.24.14+",
+          "disableWorkloads": false
+        }
+      },
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "description": "The API version for the object.\n\nRequired Value: `v1alpha1`"
+        },
+        "kind": {
+          "type": "string",
+          "description": "The kind of object.\n\nRequired Value: `Cluster`"
+        },
+        "spec": {
+          "$ref": "#/definitions/v1alpha1ClusterSpec",
+          "description": "Represents a cluster's specification."
+        }
+      },
+      "description": "Creates a Kubernetes cluster on the server. in cluster spec if networking and storage options are not passed default options will be considered \n Pod-Subnet: 10.100.0.0/16 \n Service-Subnet: 10.101.0.0/16 \n CNI: Calico \n CSI: local-path-storage \n",
+      "title": "Create cluster",
+      "required": [
+        "apiVersion",
+        "kind",
+        "spec"
+      ]
+    },
+    "v1alpha1GetClusterStatusReconcilerResponse": {
+      "type": "object",
+      "properties": {
+        "reconciler": {
+          "$ref": "#/definitions/v1alpha1Reconciler"
+        }
+      }
+    },
+    "v1alpha1Kubeconfig": {
+      "type": "object",
+      "properties": {
+        "contents": {
+          "type": "string",
+          "description": "The contents of a kubeconfig file."
+        }
+      },
+      "description": "A kubeconfig."
+    },
+    "v1alpha1Operations": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "title": "Operation type can be Install , Upgrade , Patch and Delete"
+        },
+        "Status": {
+          "type": "string",
+          "title": "Condition status can be Running , Completed and Failed"
+        },
+        "reason": {
+          "type": "string",
+          "title": "Last time when condition was executed\nFor failed operation what is the failure reason"
+        },
+        "message": {
+          "type": "string",
+          "title": "Human readable description of the condition"
+        },
+        "lastExecuted": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Last time when operation was executed"
+        },
+        "clusterType": {
+          "type": "string",
+          "title": "Type of cluster e.g. kubeadm,k3s or k0s"
+        },
+        "currentVersion": {
+          "type": "string",
+          "title": "Current version of cluster type"
+        }
+      }
+    },
+    "v1alpha1PatchClusterRequest": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "description": "The API version for the object.\n\nRequired Value: `v1alpha1`"
+        },
+        "kind": {
+          "type": "string",
+          "description": "The kind of object.\n\nRequired Value: `Cluster`"
+        },
+        "spec": {
+          "$ref": "#/definitions/v1alpha1ClusterSpec",
+          "title": "Spec for upgrading the cluster"
+        }
+      },
+      "description": "Patch the exiting cluster with new cluster object.",
+      "title": "Patch cluster",
+      "externalDocs": {
+        "description": "Find out more about ABitOfEverything",
+        "url": "https://github.com/grpc-ecosystem/grpc-gateway"
+      },
+      "required": [
+        "apiVersion",
+        "kind",
+        "spec"
+      ]
+    },
+    "v1alpha1Reconciler": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "The name of the reconciler"
+        },
+        "status": {
+          "type": "string",
+          "title": "The status of the reconciler"
+        }
+      }
+    },
+    "v1alpha1RegistryAuth": {
+      "type": "object",
+      "properties": {
+        "isAuthRequired": {
+          "type": "boolean"
+        },
+        "username": {
+          "type": "string",
+          "title": "username"
+        },
+        "password": {
+          "type": "string",
+          "title": "password"
+        }
+      }
+    },
+    "v1alpha1ResetKubeconfigRequest": {
+      "type": "object",
+      "description": "A request to set the cluster's kubeconfig."
+    },
+    "v1alpha1UpgradeClusterRequest": {
+      "type": "object",
+      "example": {
+        "apiVersion": "v1alpha1",
+        "kind": "Cluster",
+        "spec": {
+          "clusterType": "kubeadm",
+          "networking": {
+            "podSubnet": "100.100.0.0/16",
+            "svcSubnet": "100.101.0.0/16",
+            "clusterCni": {
+              "name": "calico",
+              "version": "v3.25.1"
+            }
+          },
+          "storage": {
+            "clusterCsi": {
+              "name": "local-path-storage",
+              "version": "v0.0.24"
+            }
+          },
+          "apiServer": {},
+          "version": "v1.24.14+",
+          "disableWorkloads": false
+        }
+      },
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "description": "The API version for the object.\n\nRequired Value: `v1alpha1`"
+        },
+        "kind": {
+          "type": "string",
+          "description": "The kind of object.\n\nRequired Value: `Cluster`"
+        },
+        "spec": {
+          "$ref": "#/definitions/v1alpha1ClusterSpec",
+          "title": "Spec for upgrading the cluster"
+        }
+      },
+      "description": "Upgrades a Kubernetes cluster on the server,user need to provide the target version of the cluster,during upgrade only cluster version change is supported",
+      "title": "Upgrade cluster",
+      "required": [
+        "apiVersion",
+        "kind",
+        "spec"
+      ]
+    },
+    "v1alpha1certsInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "remainingDaysToExpire": {
+          "type": "string",
+          "format": "int64"
+        },
+        "expiryDate": {
+          "type": "string"
+        },
+        "rotationDate": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ]
+}

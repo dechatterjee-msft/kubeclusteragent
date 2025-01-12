@@ -1,0 +1,17 @@
+[Unit]
+Description=Kubernetes Cluster Agent Service
+ConditionPathExists=/usr/bin/kubeclusteragent
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+ExecStart=/usr/bin/kubeclusteragent
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kubeclusteragent
+SuccessExitStatus=1
+
+[Install]
+WantedBy=multi-user.target
