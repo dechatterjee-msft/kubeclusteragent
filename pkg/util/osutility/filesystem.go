@@ -1,8 +1,10 @@
 package osutility
 
 import (
+	"archive/tar"
 	"bufio"
 	"bytes"
+	"compress/gzip"
 	"context"
 	"errors"
 	"fmt"
@@ -10,7 +12,9 @@ import (
 	"io/fs"
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/util/log/log"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -27,6 +31,8 @@ type Filesystem interface {
 	Copy(ctx context.Context, dst io.Writer, src io.Reader) (int64, error)
 	WriteNewLine(ctx context.Context, filename string, contents []byte) error
 	DeleteLineFromFileByKey(ctx context.Context, filename, key string) error
+	ExtractTarFile(ctx context.Context, src, dst string) error
+	DownloadFileUsingHttp(ctx context.Context, url, filename string, perm fs.FileMode) ([]byte, error)
 }
 
 type FakeFilesystem struct{}
@@ -115,6 +121,14 @@ func (f *FakeFilesystem) Copy(ctx context.Context, dst io.Writer, src io.Reader)
 	logger := log.From(ctx)
 	logger.Info("Copying file", "Source", src, "Destination", dst)
 	return 0, nil
+}
+
+func (f *FakeFilesystem) ExtractTarFile(ctx context.Context, src, dst string) error {
+	return nil
+}
+
+func (f *FakeFilesystem) DownloadFileUsingHttp(ctx context.Context, url, filename string, perm fs.FileMode) ([]byte, error) {
+	return nil, nil
 }
 
 type LiveFilesystem struct{}
@@ -279,4 +293,107 @@ func (l LiveFilesystem) Copy(ctx context.Context, dst io.Writer, src io.Reader) 
 	}
 
 	return bytesCopied, nil
+}
+
+func (l LiveFilesystem) ExtractTarFile(ctx context.Context, src, dst string) error {
+	// Open the tar.gz file
+	file, err := os.Open(src)
+	if err != nil {
+		return fmt.Errorf("failed to open file: %v", err)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+
+		}
+	}(file)
+
+	// Create a gzip reader
+	gzr, err := gzip.NewReader(file)
+	if err != nil {
+		return fmt.Errorf("failed to create gzip reader: %v", err)
+	}
+	defer func(gzr *gzip.Reader) {
+		err := gzr.Close()
+		if err != nil {
+		}
+	}(gzr)
+
+	// Create a tar reader
+	tarReader := tar.NewReader(gzr)
+
+	// Extract files
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			// End of archive
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("failed to read tar entry: %v", err)
+		}
+
+		// Determine the output path
+		target := filepath.Join(dst, header.Name)
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			// Create a directory
+			if err := os.MkdirAll(target, os.FileMode(header.Mode)); err != nil {
+				return fmt.Errorf("failed to create directory: %v", err)
+			}
+		case tar.TypeReg:
+			// Create a regular file
+			outFile, err := os.Create(target)
+			if err != nil {
+				return fmt.Errorf("failed to create file: %v", err)
+			}
+
+			if _, err := io.Copy(outFile, tarReader); err != nil {
+				err := outFile.Close()
+				if err != nil {
+					return err
+				}
+				return fmt.Errorf("failed to copy file content: %v", err)
+			}
+			err = outFile.Close()
+			if err != nil {
+				return err
+			}
+		default:
+			// Handle other file types if necessary
+			return fmt.Errorf("unsupported file type: %v", header.Typeflag)
+		}
+	}
+	return nil
+}
+
+func (l *LiveFilesystem) DownloadFileUsingHttp(ctx context.Context, url, filename string, perm fs.FileMode) ([]byte, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("failed to download file: %w", err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create file: %w", err)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+
+		}
+	}(file)
+
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write file: %w", err)
+	}
+	return nil, nil
 }

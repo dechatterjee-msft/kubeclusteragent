@@ -164,14 +164,16 @@ message ClusterNetworking {
   // CNI version can be used for helm based installation
   string cniVersion = 5;
 
-  // Cni manifest
-//  string cniManifest = 5;
-//  // Example: 'https://github.com/k8snetworkplumbingwg/multus-cni/blob/v3.9/deployments/multus-daemonset-thick-plugin.yml'
-//  string metaCNIManifestURL = 6;
-//  // The metaCNI manifest in base64 encoding
-//  string metaCNIManifest = 7;
+  Cilium cilium = 6;
+
 }
 
+message Cilium {
+    // installing and managing cilium is preferred using cli
+    string cliVersion = 1;
+
+    bool installKubeProxy = 2;
+}
 
 message ClusterStorage{
   // ContainerStorageInterface will be used to provision container storage

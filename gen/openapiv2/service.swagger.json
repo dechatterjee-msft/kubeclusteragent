@@ -432,6 +432,18 @@
         }
       }
     },
+    "v1alpha1Cilium": {
+      "type": "object",
+      "properties": {
+        "cliVersion": {
+          "type": "string",
+          "title": "installing and managing cilium is preferred using cli"
+        },
+        "installKubeProxy": {
+          "type": "boolean"
+        }
+      }
+    },
     "v1alpha1Cluster": {
       "type": "object",
       "properties": {
@@ -501,6 +513,9 @@
         "cniVersion": {
           "type": "string",
           "title": "CNI version can be used for helm based installation"
+        },
+        "cilium": {
+          "$ref": "#/definitions/v1alpha1Cilium"
         }
       },
       "description": "Contains configuration for cluster networking."
