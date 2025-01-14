@@ -209,3 +209,12 @@ const (
 	AuthorizedKeyFile    = "/home/admin/.ssh/authorized_keys"
 	AuthorizedKeyDirPath = "/home/admin/.ssh"
 )
+
+// cilium
+const (
+	CiliumCLIURL      = "https://github.com/cilium/cilium-cli/releases/download"
+	CiliumTarFileName = "cilium-linux-amd64.tar.gz"
+	CiliumBinary      = "cilium"
+	DownloadDir       = "/tmp"
+	BinaryPermissions = 0o755
+)

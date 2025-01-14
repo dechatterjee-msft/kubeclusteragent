@@ -24,8 +24,8 @@ func buildInstallOptions(options ...operations.Option) operations.TaskDetails {
 
 		PostTasks: []task.Task{
 			kubeadmCreate.NewRemoveTaint(),
-			kubeadmCreate.NewInstallCNI(),
 			patch.UpdateWorkloadScheduler(),
+			kubeadmCreate.NewInstallCNI(),
 			common.NewNodeReady(),
 			//	kubeadmCreate.NewCoredns(),
 			//	kubeadmCreate.NewInstallCSI(),
@@ -72,7 +72,6 @@ func buildResetOptions(options ...operations.Option) operations.TaskDetails {
 	current := operations.TaskDetails{
 		Tasks: []task.Task{
 			kubeadmReset.NewKubeadmReset(),
-			kubeadmReset.NewDeleteAdminKubeConfig(),
 			common.NewPurgeFiles(),
 		},
 		OsUtil: osutility.New(),

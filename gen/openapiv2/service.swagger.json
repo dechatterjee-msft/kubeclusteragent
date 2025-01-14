@@ -492,8 +492,15 @@
         },
         "cniManifestURL": {
           "type": "string",
-          "description": "Cni manifest\n  string cniManifest = 5;\n  // Example: 'https://github.com/k8snetworkplumbingwg/multus-cni/blob/v3.9/deployments/multus-daemonset-thick-plugin.yml'\n  string metaCNIManifestURL = 6;\n  // The metaCNI manifest in base64 encoding\n  string metaCNIManifest = 7;",
           "title": "Container Networking will be used to setup the network between k8s workloads\nCni manifest URL"
+        },
+        "cniName": {
+          "type": "string",
+          "title": "CNI name is mandatory for calico or cilium because it need some special configuration"
+        },
+        "cniVersion": {
+          "type": "string",
+          "title": "CNI version can be used for helm based installation"
         }
       },
       "description": "Contains configuration for cluster networking."

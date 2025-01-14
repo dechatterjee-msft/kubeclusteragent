@@ -37,7 +37,7 @@ func (t *ContainerdInstall) Run(
 		if err := ou.PackageManager().Update(ctx); err != nil {
 			return fmt.Errorf("update packages: %w", err)
 		}
-		if err := ou.PackageManager().Install(ctx, "containerd"); err != nil {
+		if err := ou.PackageManager().Install(ctx, "containerd.io"); err != nil {
 			return fmt.Errorf("install containerd: %w", err)
 		}
 	}

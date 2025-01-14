@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"go.uber.org/multierr"
-	"kubeclusteragent/pkg/tools/kubernetestoolsfactory"
 	"kubeclusteragent/pkg/util/conditions"
 	"kubeclusteragent/pkg/util/heartbeat"
 	"kubeclusteragent/pkg/util/k8s"
@@ -113,6 +112,7 @@ func (csr *ClusterStatusReconciler) getClusterHeartbeat() error {
 		return err
 	}
 	clusterStatus.Unschedulable = node.Spec.Unschedulable
+	clusterStatus.KubernetesVersion = node.Status.NodeInfo.KubeletVersion
 	if !nodeready {
 		conditions.MarkFalse(clusterStatus, v1alpha1.ConditionType_NodeReady, constants.NodeReadyStatusMessageFailed, constants.ConditionSeverityError, "Node is not in ready status")
 	} else {
@@ -120,19 +120,6 @@ func (csr *ClusterStatusReconciler) getClusterHeartbeat() error {
 	}
 	var cpReady bool
 	// Triggering auto upgrade if kubeadm,kubelet have been upgraded offline without using kubecluster agent
-	if clusterSpec.Version != node.Status.NodeInfo.KubeletVersion {
-		csr.log.Info("cluster status reconciler detected cluster upgrade",
-			"current-version", clusterSpec.Version,
-			"desiered-version", node.Status.NodeInfo.KubeletVersion)
-		var kubeToolFactory kubernetestoolsfactory.KubeToolsFactory = &kubernetestoolsfactory.KubeManager{}
-		err = kubeToolFactory.KubernetesClusterUpgradeManager(csr.context, node.Status.NodeInfo.KubeletVersion)
-		if err != nil {
-			csr.log.Error(err, "upgrade failed with error,cluster will be automatically rolled back,"+
-				"reconciler will try to upgrade in the next attempt")
-		}
-	} else {
-		clusterStatus.KubernetesVersion = node.Status.NodeInfo.KubeletVersion
-	}
 	if clusterSpec.ClusterType == "kubeadm" {
 		cpReady, err = csr.genericControlPlaneHeartBeatInfo()
 		if err != nil {
@@ -143,6 +130,7 @@ func (csr *ClusterStatusReconciler) getClusterHeartbeat() error {
 	if !cpReady {
 		conditions.MarkFalse(clusterStatus, v1alpha1.ConditionType_ControlPlaneReady, constants.ControlPlaneStatusMessageFailed, constants.ConditionSeverityError, "Control Plane is not in ready status")
 	} else {
+		// csr.log.Info("ControlPlane status is ready")
 		conditions.MarkTrue(clusterStatus, v1alpha1.ConditionType_ControlPlaneReady)
 	}
 	if nodeready && cpReady {
@@ -264,4 +252,20 @@ func (csr *ClusterStatusReconciler) reinitializingKubeClient() error {
 		return err
 	}
 	return nil
+}
+
+func (csr *ClusterStatusReconciler) triggerAutoUpgrade() {
+	//if clusterSpec.Version != node.Status.NodeInfo.KubeletVersion {
+	//	csr.log.Info("cluster status reconciler detected cluster upgrade",
+	//		"current-version", clusterSpec.Version,
+	//		"desiered-version", node.Status.NodeInfo.KubeletVersion)
+	//	var kubeToolFactory kubernetestoolsfactory.KubeToolsFactory = &kubernetestoolsfactory.KubeManager{}
+	//	err = kubeToolFactory.KubernetesClusterUpgradeManager(csr.context, node.Status.NodeInfo.KubeletVersion)
+	//	if err != nil {
+	//		csr.log.Error(err, "upgrade failed with error,cluster will be automatically rolled back,"+
+	//			"reconciler will try to upgrade in the next attempt")
+	//	}
+	//} else {
+	//	clusterStatus.KubernetesVersion = node.Status.NodeInfo.KubeletVersion
+	//}
 }

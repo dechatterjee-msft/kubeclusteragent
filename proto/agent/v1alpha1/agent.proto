@@ -159,6 +159,11 @@ message ClusterNetworking {
  // Container Networking will be used to setup the network between k8s workloads
   // Cni manifest URL
   string cniManifestURL = 3;
+  // CNI name is mandatory for calico or cilium because it need some special configuration
+  string cniName = 4;
+  // CNI version can be used for helm based installation
+  string cniVersion = 5;
+
   // Cni manifest
 //  string cniManifest = 5;
 //  // Example: 'https://github.com/k8snetworkplumbingwg/multus-cni/blob/v3.9/deployments/multus-daemonset-thick-plugin.yml'

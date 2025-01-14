@@ -142,7 +142,9 @@ func (t *KubeadmTool) validateSpec(spec *v1alpha1.ClusterSpec) error {
 			spec.DisableWorkloads = &disableWorkload
 		}
 		if spec.Networking.CniManifestURL == "" {
-			err = multierr.Append(err, errors.New("cni details is missing cni name and version is mandatory"))
+			if spec.Networking.CniVersion == "" || spec.Networking.CniName == "" {
+				err = multierr.Append(err, errors.New("cni details is missing cni name and version is mandatory"))
+			}
 		}
 	}
 	if spec.Version == "" {
