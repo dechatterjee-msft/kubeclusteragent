@@ -39,11 +39,11 @@ func (f *FakeKubectl) RunWithResponse(ctx context.Context, cmdArgs ...string) (s
 }
 
 func (f *FakeKubectlError) Run(ctx context.Context, cmdArgs ...string) error {
-	return fmt.Errorf("test error")
+	return fmt.Errorf("testutil error")
 }
 
 func (f *FakeKubectlError) RunWithResponse(ctx context.Context, cmdArgs ...string) (string, error) {
-	return "", fmt.Errorf("test error")
+	return "", fmt.Errorf("testutil error")
 }
 
 func NewFakeKubectl() *FakeKubectl {

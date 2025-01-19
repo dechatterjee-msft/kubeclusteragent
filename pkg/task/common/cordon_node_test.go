@@ -14,7 +14,7 @@ func TestCordonNode_Name(t1 *testing.T) {
 		name string
 		want string
 	}{
-		{name: "test-cordon-node-name", want: "cordon-node"},
+		{name: "testutil-cordon-node-name", want: "cordon-node"},
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -38,7 +38,7 @@ func TestCordonNode_Rollback(t1 *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		// TODO: Add testutil cases.
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -62,14 +62,14 @@ func TestCordonNode_Run(t1 *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "test-cordon-node", args: struct {
+		{name: "testutil-cordon-node", args: struct {
 			ctx         context.Context
 			status      cluster.Status
 			clusterSpec *v1alpha1.ClusterSpec
 			ou          osutility.OSUtil
 		}{ctx: context.Background(), status: nil, clusterSpec: &v1alpha1.ClusterSpec{
 			ClusterType: "kubeadm",
-			ClusterName: "test-cluster",
+			ClusterName: "testutil-cluster",
 			Networking: &v1alpha1.ClusterNetworking{
 				PodSubnet: "100.100.0.0/16",
 				SvcSubnet: "100.101.0.0/16",
@@ -107,7 +107,7 @@ func TestNewCordonNode(t *testing.T) {
 		name string
 		want *CordonNode
 	}{
-		{name: "test-cordon-node-new", want: NewCordonNode()},
+		{name: "testutil-cordon-node-new", want: NewCordonNode()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

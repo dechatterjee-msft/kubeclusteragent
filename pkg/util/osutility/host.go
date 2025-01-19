@@ -23,7 +23,7 @@ func (l *LiveHost) GetHostname() (string, error) {
 }
 
 func (l *FakeHost) GetHostname() (string, error) {
-	return "test", nil
+	return "testutil", nil
 }
 
 func (l *FakeHostWithErr) GetHostname() (string, error) {

@@ -7,7 +7,7 @@ import (
 	"io"
 	"io/fs"
 	"io/ioutil"
-	"kubeclusteragent/pkg/util/test"
+	"kubeclusteragent/pkg/util/testutil"
 	"os"
 	"path/filepath"
 	"strings"

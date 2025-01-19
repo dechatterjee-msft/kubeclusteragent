@@ -43,6 +43,14 @@ func (t *Binaries) Run(
 	if clusterSpec.Version == "" {
 		return errors.New("no Kubernetes version supplied")
 	}
+	installed, err := verifyIfKubeadmAlreadyInstalled(ctx, clusterSpec, ou)
+	if err != nil {
+		logger.Error(err, "error checking if Kubeadm is already installed, proceeding anyway")
+	}
+	if installed {
+		logger.Info("Kubeadm is already installed, skipping installation")
+		return nil
+	}
 	if err := ou.PackageManager().Update(ctx); err != nil {
 		return fmt.Errorf("update packages: %w", err)
 	}
@@ -160,4 +168,12 @@ func convertKubernetesVersionContainsV(kubernetesVersion string) string {
 		kubernetesVersion = split[1]
 	}
 	return kubernetesVersion
+}
+
+func verifyIfKubeadmAlreadyInstalled(ctx context.Context, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) (bool, error) {
+	version, err := ou.Kubeadm().Version(ctx)
+	if err != nil {
+		return false, err
+	}
+	return version == clusterSpec.Version, nil
 }

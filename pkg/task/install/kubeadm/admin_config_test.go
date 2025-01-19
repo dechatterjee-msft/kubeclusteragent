@@ -15,7 +15,7 @@ func TestAdminConfig_Name(t1 *testing.T) {
 		want string
 	}{
 		{
-			name: "test-set-admin-kubeconfig",
+			name: "testutil-set-admin-kubeconfig",
 			want: "set-admin-kubeconfig",
 		},
 	}
@@ -41,7 +41,7 @@ func TestAdminConfig_Rollback(t1 *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		// TODO: Add testutil cases.
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -72,7 +72,7 @@ func TestAdminConfig_Run(t1 *testing.T) {
 			ou          osutility.OSUtil
 		}{ctx: context.Background(), status: nil, clusterSpec: &v1alpha1.ClusterSpec{
 			ClusterType: "kubeadm",
-			ClusterName: "test-cluster",
+			ClusterName: "testutil-cluster",
 			Networking: &v1alpha1.ClusterNetworking{
 				PodSubnet: "100.100.0.0/16",
 				SvcSubnet: "100.101.0.0/16",
@@ -110,7 +110,7 @@ func TestNewAdminConfig(t *testing.T) {
 		name string
 		want *AdminConfig
 	}{
-		{name: "test-new-admin-config", want: NewAdminConfig()},
+		{name: "testutil-new-admin-config", want: NewAdminConfig()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

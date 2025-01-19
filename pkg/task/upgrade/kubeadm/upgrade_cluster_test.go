@@ -45,7 +45,7 @@ func TestCluster_Run(t *testing.T) {
 			ou          osutility.OSUtil
 		}{ctx: context.Background(), status: nil, clusterSpec: &v1alpha1.ClusterSpec{
 			ClusterType: "kubeadm",
-			ClusterName: "test-cluster",
+			ClusterName: "testutil-cluster",
 			Networking: &v1alpha1.ClusterNetworking{
 				PodSubnet: "100.100.0.0/16",
 				SvcSubnet: "100.101.0.0/16",

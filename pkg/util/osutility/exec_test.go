@@ -2,7 +2,7 @@ package osutility
 
 import (
 	"context"
-	"kubeclusteragent/pkg/util/test"
+	"kubeclusteragent/pkg/util/testutilutil"
 	"testing"
 
 	"github.com/stretchr/testify/require"

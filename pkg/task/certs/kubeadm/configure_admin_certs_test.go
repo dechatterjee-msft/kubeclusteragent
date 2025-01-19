@@ -14,7 +14,7 @@ func TestAdminCertsRotation_Name(t *testing.T) {
 		name string
 		want string
 	}{
-		{name: "test-configure-admin-certs", want: "configure-admin-certs"},
+		{name: "testutil-configure-admin-certs", want: "configure-admin-certs"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -38,7 +38,7 @@ func TestAdminCertsRotation_Rollback(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		// TODO: Add testutil cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -62,7 +62,7 @@ func TestAdminCertsRotation_Run(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "test-rotate-admin-certs-run", args: struct {
+		{name: "testutil-rotate-admin-certs-run", args: struct {
 			ctx         context.Context
 			status      cluster.Status
 			clusterSpec *v1alpha1.ClusterSpec
@@ -85,7 +85,7 @@ func TestNewRotateAdminCerts(t *testing.T) {
 		name string
 		want *AdminCertsRotation
 	}{
-		{name: "test-new-rotate-admin-certs", want: NewRotateAdminCerts()},
+		{name: "testutil-new-rotate-admin-certs", want: NewRotateAdminCerts()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

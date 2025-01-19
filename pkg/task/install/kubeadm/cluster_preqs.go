@@ -2,6 +2,7 @@ package kubeadm
 
 import (
 	"context"
+	"fmt"
 	"kubeclusteragent/gen/go/agent/v1alpha1"
 	"kubeclusteragent/pkg/cluster"
 	"kubeclusteragent/pkg/constants"
@@ -27,12 +28,29 @@ func (c ClusterPrerequisites) Name() string {
 func (c ClusterPrerequisites) Run(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) error {
 	logger := log.From(ctx)
 	logger.Info("running kubernetes prerequisites")
-	_, _, err := ou.Exec().CommandWithNoLogging(ctx, "swapoff", []string{"-a"})
+	code, _, err := ou.Exec().CommandWithNoLogging(ctx, "swapoff", nil, []string{"-a"}...)
+	if code != 0 {
+		err = fmt.Errorf("failed to swapoff kubernetes prerequisites")
+		logger.Error(err, "failed to switch off swap", "code", code)
+		return err
+	}
 	if err != nil {
 		logger.Error(err, "failed to switch off swap")
 		return err
 	}
-	_, _, err = ou.Exec().CommandWithNoLogging(ctx, "sed", []string{"-i", "'/swap/d'", "/etc/fstab"})
+	// backup /etc/fstab
+	code, _, err = ou.Exec().CommandWithNoLogging(ctx, "cp", nil, []string{"/etc/fstab", "/etc/fstab.bak"}...)
+	if code != 0 {
+		err = fmt.Errorf("failed to backup /etc/fstab.bak")
+		logger.Error(err, "failed to backup /etc/fstab.bak")
+		return err
+	}
+	code, _, err = ou.Exec().CommandWithNoLogging(ctx, "sed", nil, []string{"-i.bak", "-e", "/\\sswap\\s/s/^/#/", "/etc/fstab"}...)
+	if code != 0 {
+		err = fmt.Errorf("failed to update swappiness in /etc/fstab")
+		logger.Error(err, "failed to switch off swap", "code", code)
+		return err
+	}
 	if err != nil {
 		logger.Error(err, "failed to update swap/d in /etc/fstab")
 		return err

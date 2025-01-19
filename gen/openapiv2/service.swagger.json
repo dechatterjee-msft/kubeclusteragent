@@ -727,6 +727,13 @@
           "type": "string",
           "description": "The kind of object.\n\nRequired Value: `Cluster`"
         },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "any additional information which consumer want's to pass"
+        },
         "spec": {
           "$ref": "#/definitions/v1alpha1ClusterSpec",
           "description": "Represents a cluster's specification."

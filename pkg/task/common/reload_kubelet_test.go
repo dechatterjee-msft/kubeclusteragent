@@ -14,7 +14,7 @@ func TestKubeletReload_Name(t1 *testing.T) {
 		name string
 		want string
 	}{
-		{name: "test-kubelet-reload-name", want: "kubelet-reload"},
+		{name: "testutil-kubelet-reload-name", want: "kubelet-reload"},
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -38,7 +38,7 @@ func TestKubeletReload_Rollback(t1 *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		// TODO: Add testutil cases.
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -62,7 +62,7 @@ func TestKubeletReload_Run(t1 *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "test-reload-kubelet-run", args: struct {
+		{name: "testutil-reload-kubelet-run", args: struct {
 			ctx         context.Context
 			status      cluster.Status
 			clusterSpec *v1alpha1.ClusterSpec
@@ -85,7 +85,7 @@ func TestNewKubeletReload(t *testing.T) {
 		name string
 		want *KubeletReload
 	}{
-		{name: "test-new-reload-kubelet", want: NewKubeletReload()},
+		{name: "testutil-new-reload-kubelet", want: NewKubeletReload()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

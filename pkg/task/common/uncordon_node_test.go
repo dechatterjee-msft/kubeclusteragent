@@ -14,7 +14,7 @@ func TestNewUnCordonNode(t *testing.T) {
 		name string
 		want *UnCordonNode
 	}{
-		{name: "test-uncordon-node-name", want: NewUnCordonNode()},
+		{name: "testutil-uncordon-node-name", want: NewUnCordonNode()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -30,7 +30,7 @@ func TestUnCordonNode_Name(t1 *testing.T) {
 		name string
 		want string
 	}{
-		{name: "test-uncordon-node", want: "uncordon-node"},
+		{name: "testutil-uncordon-node", want: "uncordon-node"},
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -54,7 +54,7 @@ func TestUnCordonNode_Rollback(t1 *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		// TODO: Add testutil cases.
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -78,14 +78,14 @@ func TestUnCordonNode_Run(t1 *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "test-uncordon-node-run", args: struct {
+		{name: "testutil-uncordon-node-run", args: struct {
 			ctx         context.Context
 			status      cluster.Status
 			clusterSpec *v1alpha1.ClusterSpec
 			ou          osutility.OSUtil
 		}{ctx: context.Background(), status: nil, clusterSpec: &v1alpha1.ClusterSpec{
 			ClusterType: "kubeadm",
-			ClusterName: "test-cluster",
+			ClusterName: "testutil-cluster",
 			Networking: &v1alpha1.ClusterNetworking{
 				PodSubnet: "100.100.0.0/16",
 				SvcSubnet: "100.101.0.0/16",

@@ -50,7 +50,7 @@ func TestK8sUtil_NodeWorkloadScheduler_HostError(t *testing.T) {
 	}{
 		{name: "HostNameError", args: args{
 			ctx:           context.Background(),
-			operationName: "test",
+			operationName: "testutil",
 		}, wantErr: true},
 	}
 	for _, tt := range tests {
@@ -77,7 +77,7 @@ func TestK8sUtil_NodeWorkloadScheduler_KubeClientError(t *testing.T) {
 	}{
 		{name: "KubeclientError", args: args{
 			ctx:           context.Background(),
-			operationName: "test",
+			operationName: "testutil",
 		}, wantErr: true},
 	}
 	for _, tt := range tests {

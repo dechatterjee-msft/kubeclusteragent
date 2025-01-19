@@ -3,7 +3,7 @@ package osutility
 type OSUtil interface {
 	Exec() Exec
 	Filesystem() Filesystem
-	PackageManager() PackageManager
+	PackageManager() PackageManagerFactory
 	Sysctl() Sysctl
 	Systemd() Systemd
 	Kubectl() Kubectl
@@ -13,7 +13,7 @@ type OSUtil interface {
 type DryRun struct {
 	exec           *FakeExec
 	filesystem     *FakeFilesystem
-	packageManager *FakePackageManager
+	packageManager *FakeAptGetPackageManager
 	sysctl         *FakeSysctl
 	systemd        *FakeSystemd
 	kubectl        *FakeKubectl
@@ -26,7 +26,7 @@ func NewDryRun() *DryRun {
 	u := &DryRun{
 		exec:           NewFakeExec(),
 		filesystem:     NewFakeFilesystem(),
-		packageManager: NewFakePackage(),
+		packageManager: NewAptGetFakePackage(),
 		sysctl:         NewFakeSysctl(),
 		systemd:        NewFakeSystemd(),
 		kubectl:        NewFakeKubectl(),
@@ -35,7 +35,7 @@ func NewDryRun() *DryRun {
 	return u
 }
 
-func (f *DryRun) PackageManager() PackageManager {
+func (f *DryRun) PackageManager() PackageManagerFactory {
 	return f.packageManager
 }
 
@@ -66,7 +66,7 @@ func (f *DryRun) Kubeadm() Kubeadm {
 type Live struct {
 	exec           *LiveExec
 	filesystem     *LiveFilesystem
-	packageManager *LivePackageManager
+	packageManager any
 	sysctl         *LiveSysctl
 	systemd        *LiveSystemd
 	kubectl        *LiveKubectl
@@ -82,7 +82,7 @@ func New() *Live {
 	u := &Live{
 		exec:           execUtil,
 		filesystem:     fsUtil,
-		packageManager: NewLivePackageManager(execUtil, fsUtil),
+		packageManager: nil,
 		sysctl:         NewLiveSysctl(execUtil, fsUtil),
 		systemd:        NewLiveSystemd(execUtil),
 		kubectl:        NewLiveKubectl(execUtil),
@@ -96,8 +96,8 @@ func (f *Live) Kubectl() Kubectl {
 	return f.kubectl
 }
 
-func (f *Live) PackageManager() PackageManager {
-	return f.packageManager
+func (f *Live) PackageManager() PackageManagerFactory {
+	return NewAptGetLivePackageManager(f.exec, f.filesystem)
 }
 
 func (f *Live) Systemd() Systemd {

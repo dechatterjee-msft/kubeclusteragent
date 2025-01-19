@@ -4,7 +4,7 @@ import (
 	"context"
 	"io/fs"
 	"kubeclusteragent/pkg/util/osutility"
-	"kubeclusteragent/pkg/util/test"
+	"kubeclusteragent/pkg/util/osutility/packagemanager"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -29,7 +29,7 @@ func newSysctlHarness(ctrl *gomock.Controller) *sysctlHarness {
 	return h
 }
 
-func (h *sysctlHarness) ExpectCommand(name string, env, args []string, ret []any) {
+func (h *sysctlHarness) ExpectCommand(name string, env, args []string, ret []packagemanager.any) {
 	h.exec.EXPECT().Command(gomock.Any(), name, env, args).Return(ret...)
 }
 
@@ -47,7 +47,7 @@ func TestLiveSysctl_Reload(t *testing.T) {
 			name: "success",
 			harness: func(ctrl *gomock.Controller) *sysctlHarness {
 				h := newSysctlHarness(ctrl)
-				h.ExpectCommand("sysctl", nil, []string{"--system"}, []any{0, nil, nil})
+				h.ExpectCommand("sysctl", nil, []string{"--system"}, []packagemanager.any{0, nil, nil})
 				return h
 			},
 			wantErr: false,

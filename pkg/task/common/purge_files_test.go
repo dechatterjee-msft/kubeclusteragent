@@ -14,7 +14,7 @@ func TestNewPurgeFiles(t *testing.T) {
 		name string
 		want *PurgeFiles
 	}{
-		{name: "test-purge-files-obj", want: NewPurgeFiles()},
+		{name: "testutil-purge-files-obj", want: NewPurgeFiles()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -30,7 +30,7 @@ func TestPurgeFiles_Name(t *testing.T) {
 		name string
 		want string
 	}{
-		{name: "test-purge-file-name", want: "purge-files"},
+		{name: "testutil-purge-file-name", want: "purge-files"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestPurgeFiles_Rollback(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		// TODO: Add testutil cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -78,7 +78,7 @@ func TestPurgeFiles_Run(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "test-purge-files-run", args: struct {
+		{name: "testutil-purge-files-run", args: struct {
 			ctx         context.Context
 			status      cluster.Status
 			clusterSpec *v1alpha1.ClusterSpec

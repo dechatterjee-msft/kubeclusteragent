@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io/fs"
 	"kubeclusteragent/pkg/util/osutility"
-	"kubeclusteragent/pkg/util/test"
+	"kubeclusteragent/pkg/util/testutil"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -18,7 +18,7 @@ type any = interface{}
 type packageHarness struct {
 	exec *mocks.MockExec
 	fs   *mocks.MockFilesystem
-	pkg  *osutility.FakePackageManager
+	pkg  *osutility.FakeAptGetPackageManager
 }
 
 func newPackageHarness(ctrl *gomock.Controller) *packageHarness {
@@ -27,7 +27,7 @@ func newPackageHarness(ctrl *gomock.Controller) *packageHarness {
 	h := &packageHarness{
 		exec: exec,
 		fs:   fsUtil,
-		pkg:  osutility.NewFakePackageManager(exec, fsUtil),
+		pkg:  osutility.NewFakeAptGetPackageManager(exec, fsUtil),
 	}
 
 	return h
@@ -41,7 +41,7 @@ func (h *packageHarness) WriteFile(destination string, data []byte, perm fs.File
 	h.fs.EXPECT().WriteFile(gomock.Any(), destination, data, perm).Return(err).AnyTimes()
 }
 
-func TestLivePackage_CheckInstalled(t *testing.T) {
+func TestAptGetLivePackage_CheckInstalled(t *testing.T) {
 	type args struct {
 		packageName string
 	}
@@ -87,7 +87,7 @@ func TestLivePackage_CheckInstalled(t *testing.T) {
 	}
 }
 
-func TestLivePackage_Install(t *testing.T) {
+func TestAptGetLivePackage_Install(t *testing.T) {
 	type args struct {
 		packageNames []string
 	}
@@ -157,12 +157,12 @@ func TestLivePackage_Install(t *testing.T) {
 			h := test.harness(ctrl)
 			l := h.pkg
 			err := l.Install(context.Background(), test.args.packageNames...)
-			test.CheckError(t, test.wantError, err)
+			testutil.CheckError(t, test.wantError, err)
 		})
 	}
 }
 
-func TestLivePackage_Update(t *testing.T) {
+func TestAptGetLivePackage_Update(t *testing.T) {
 
 	tests := []struct {
 		name      string
@@ -206,12 +206,12 @@ func TestLivePackage_Update(t *testing.T) {
 			h := test.harness(ctrl)
 			l := h.pkg
 			err := l.Update(context.Background())
-			test.CheckError(t, test.wantError, err)
+			testutil.CheckError(t, test.wantError, err)
 		})
 	}
 }
 
-func TestLivePackage_AddKey(t *testing.T) {
+func TestAptGetLivePackage_AddKey(t *testing.T) {
 	type args struct {
 		url string
 	}
@@ -288,12 +288,12 @@ func TestLivePackage_AddKey(t *testing.T) {
 			h := test.harness(ctrl)
 			l := h.pkg
 			err := l.AddKey(context.Background(), test.args.url)
-			test.CheckError(t, test.wantError, err)
+			testutil.CheckError(t, test.wantError, err)
 		})
 	}
 }
 
-func TestLivePackage_AddRepository(t *testing.T) {
+func TestAptGetLivePackage_AddRepository(t *testing.T) {
 	type args struct {
 		repository string
 		filename   string
@@ -309,11 +309,11 @@ func TestLivePackage_AddRepository(t *testing.T) {
 			name: "success",
 			args: args{
 				repository: "repo",
-				filename:   "test",
+				filename:   "testutil",
 			},
 			harness: func(ctrl *gomock.Controller) *packageHarness {
 				h := newPackageHarness(ctrl)
-				h.WriteFile("/etc/apt/sources.list.d/test.list", []byte("repo"), 0644, nil)
+				h.WriteFile("/etc/apt/sources.list.d/testutil.list", []byte("repo"), 0644, nil)
 				return h
 			},
 			wantErr: false,
@@ -328,7 +328,7 @@ func TestLivePackage_AddRepository(t *testing.T) {
 
 			l := h.pkg
 			err := l.AddRepository(context.Background(), test.args.repository, test.args.filename)
-			test.CheckError(t, test.wantErr, err)
+			testutil.CheckError(t, test.wantErr, err)
 		})
 	}
 }

@@ -14,7 +14,7 @@ func TestDeleteAdminKubeConfig_Name(t *testing.T) {
 		name string
 		want string
 	}{
-		{name: "test-delete-admin-kube-config", want: "delete-admin-kube-config"},
+		{name: "testutil-delete-admin-kube-config", want: "delete-admin-kube-config"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -38,7 +38,7 @@ func TestDeleteAdminKubeConfig_Rollback(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		// TODO: Add testutil cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -69,7 +69,7 @@ func TestDeleteAdminKubeConfig_Run(t *testing.T) {
 			ou          osutility.OSUtil
 		}{ctx: context.Background(), status: nil, clusterSpec: &v1alpha1.ClusterSpec{
 			ClusterType: "kubeadm",
-			ClusterName: "test-cluster",
+			ClusterName: "testutil-cluster",
 			Networking: &v1alpha1.ClusterNetworking{
 				PodSubnet: "100.100.0.0/16",
 				SvcSubnet: "100.101.0.0/16",
@@ -107,7 +107,7 @@ func TestNewDeleteAdminKubeConfig(t *testing.T) {
 		name string
 		want *DeleteAdminKubeConfig
 	}{
-		{name: "test-new-admin-config", want: NewDeleteAdminKubeConfig()},
+		{name: "testutil-new-admin-config", want: NewDeleteAdminKubeConfig()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

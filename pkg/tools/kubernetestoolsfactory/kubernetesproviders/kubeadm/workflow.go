@@ -17,8 +17,9 @@ func buildInstallOptions(options ...operations.Option) operations.TaskDetails {
 		PreTasks: []task.Task{
 			kubeadmCreate.NewClusterPrerequisites(),
 			kubeadmCreate.NewInstallContainerd(),
+			kubeadmCreate.NewPrepareContainerd(),
 			kubeadmCreate.NewInstallBinaries(),
-			kubeadmCreate.NewPrepareContainerd()},
+		},
 
 		Tasks: []task.Task{kubeadmCreate.NewInstallCluster()},
 

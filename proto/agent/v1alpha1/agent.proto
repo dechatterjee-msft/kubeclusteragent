@@ -207,6 +207,7 @@ message ClusterSpec {
   map<string,string> extraArgs = 8;
   // Cluster Container Runtime
   ClusterRuntime clusterRuntime = 9;
+
 }
 
 message AuditHistoryResponse{
@@ -294,8 +295,10 @@ message CreateClusterRequest {
   //
   // Required Value: `Cluster`
   string kind = 2;
+  // any additional information which consumer want's to pass
+  map<string,string> metadata = 3;
   // Represents a cluster's specification.
-  ClusterSpec spec = 3;
+  ClusterSpec spec = 4;
 }
 
 // A request to upgrade a cluster.

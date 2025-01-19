@@ -3,7 +3,7 @@ package osutility_test
 import (
 	"context"
 	"kubeclusteragent/pkg/util/osutility"
-	"kubeclusteragent/pkg/util/test"
+	"kubeclusteragent/pkg/util/osutility/packagemanager"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -26,7 +26,7 @@ func newSystemHarness(ctrl *gomock.Controller) *systemdHarness {
 	return h
 }
 
-func (h *systemdHarness) ExpectCommand(name string, env, args []string, ret []any) {
+func (h *systemdHarness) ExpectCommand(name string, env, args []string, ret []packagemanager.any) {
 	h.exec.EXPECT().Command(gomock.Any(), name, env, args).Return(ret...)
 }
 
@@ -51,7 +51,7 @@ func TestLiveSystemd_IsRunning(t *testing.T) {
 				h.ExpectCommand("systemctl",
 					nil,
 					[]string{"show", "-p", "ActiveState", "--value", "name"},
-					[]any{0, []byte("active"), nil})
+					[]packagemanager.any{0, []byte("active"), nil})
 				return h
 			},
 			want:    true,
@@ -67,7 +67,7 @@ func TestLiveSystemd_IsRunning(t *testing.T) {
 				h.ExpectCommand("systemctl",
 					nil,
 					[]string{"show", "-p", "ActiveState", "--value", "name"},
-					[]any{0, []byte("inactive"), nil})
+					[]packagemanager.any{0, []byte("inactive"), nil})
 				return h
 			},
 			want:    false,
@@ -111,7 +111,7 @@ func TestLiveSystemd_Start(t *testing.T) {
 				h.ExpectCommand("systemctl",
 					nil,
 					[]string{"start", "name"},
-					[]any{0, nil, nil})
+					[]packagemanager.any{0, nil, nil})
 				return h
 			},
 			want:    true,
@@ -153,7 +153,7 @@ func TestLiveSystemd_Stop(t *testing.T) {
 				h.ExpectCommand("systemctl",
 					nil,
 					[]string{"stop", "name"},
-					[]any{0, nil, nil})
+					[]packagemanager.any{0, nil, nil})
 				return h
 			},
 			want:    true,
@@ -195,7 +195,7 @@ func TestLiveSystemd_Restart(t *testing.T) {
 				h.ExpectCommand("systemctl",
 					nil,
 					[]string{"restart", "name"},
-					[]any{0, nil, nil})
+					[]packagemanager.any{0, nil, nil})
 				return h
 			},
 			want:    true,
@@ -237,7 +237,7 @@ func TestLiveSystemd_Reload(t *testing.T) {
 				h.ExpectCommand("systemctl",
 					nil,
 					[]string{"reload", "name"},
-					[]any{0, nil, nil})
+					[]packagemanager.any{0, nil, nil})
 				return h
 			},
 			want:    true,

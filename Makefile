@@ -55,7 +55,7 @@ build:	## Build
 	@echo "Building kubeclusteragent ..."
 	export GO111MODULE=off
 	go mod tidy
-	GOOS=linux GOARCH=$(GOARCH) GOPATH=$(GOPATH) go  build  -ldflags="-s -w" -o bin/$(BINARY_NAME) cmd/kubeclusteragent/main.go
+	go  build  -ldflags="-s -w" -o bin/$(BINARY_NAME) cmd/main.go
 	@echo "Built kubeclusteragent binary"
 	@echo "Building kubeclusteragent rpm ..."
 	mkdir target
