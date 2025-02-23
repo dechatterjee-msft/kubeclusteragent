@@ -2,7 +2,7 @@ package network
 
 import (
 	"context"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"reflect"
 	"testing"
 )
@@ -14,7 +14,7 @@ func TestNewSecondaryNetwork(t *testing.T) {
 		Label                   string
 		IPv4Address             string
 		IPv4Gateway             string
-		ou                      osutility.OSUtil
+		ou                      linux.OSUtil
 	}
 	tests := []struct {
 		name string
@@ -28,21 +28,21 @@ func TestNewSecondaryNetwork(t *testing.T) {
 				Label                   string
 				IPv4Address             string
 				IPv4Gateway             string
-				ou                      osutility.OSUtil
+				ou                      linux.OSUtil
 			}{
 				ctx:                     context.Background(),
 				PrimaryNetworkInterface: "eth0",
 				Label:                   "1",
 				IPv4Address:             "100.102.1.1",
 				IPv4Gateway:             "",
-				ou:                      osutility.NewDryRun(),
+				ou:                      linux.NewDryRun(),
 			},
 			want: &SecondaryNetworkIPv4{
 				PrimaryNetworkInterface: "eth0",
 				IPv4Address:             "100.102.1.1",
 				IPv4Gateway:             "",
 				AddressLabel:            "1",
-				Osutil:                  osutility.NewDryRun(),
+				Osutil:                  linux.NewDryRun(),
 				networkInterfacePath:    "/etc/systemd/network/10-eth0.network.d",
 			}},
 	}
@@ -61,7 +61,7 @@ func TestSecondaryNetwork_Add(t *testing.T) {
 		IPv4Address             string
 		IPv4Gateway             string
 		AddressLabel            string
-		Osutil                  osutility.OSUtil
+		Osutil                  linux.OSUtil
 		networkInterfacePath    string
 	}
 	type args struct {
@@ -78,13 +78,13 @@ func TestSecondaryNetwork_Add(t *testing.T) {
 			IPv4Address             string
 			IPv4Gateway             string
 			AddressLabel            string
-			Osutil                  osutility.OSUtil
+			Osutil                  linux.OSUtil
 			networkInterfacePath    string
 		}{
 			PrimaryNetworkInterface: "eth0", IPv4Address: "100.102.1.1",
 			IPv4Gateway:          "",
 			AddressLabel:         "1",
-			Osutil:               osutility.NewDryRun(),
+			Osutil:               linux.NewDryRun(),
 			networkInterfacePath: "/etc/systemd/network/10-eth0.network.d"},
 			args: struct {
 				ctx context.Context
@@ -117,7 +117,7 @@ func TestSecondaryNetwork_Del(t *testing.T) {
 		IPv4Address             string
 		IPv4Gateway             string
 		AddressLabel            string
-		Osutil                  osutility.OSUtil
+		Osutil                  linux.OSUtil
 		networkInterfacePath    string
 	}
 	type args struct {
@@ -134,13 +134,13 @@ func TestSecondaryNetwork_Del(t *testing.T) {
 			IPv4Address             string
 			IPv4Gateway             string
 			AddressLabel            string
-			Osutil                  osutility.OSUtil
+			Osutil                  linux.OSUtil
 			networkInterfacePath    string
 		}{
 			PrimaryNetworkInterface: "eth0", IPv4Address: "100.102.1.1",
 			IPv4Gateway:          "",
 			AddressLabel:         "1",
-			Osutil:               osutility.NewDryRun(),
+			Osutil:               linux.NewDryRun(),
 			networkInterfacePath: "/etc/systemd/network/10-eth0.network.d"},
 			args: struct {
 				ctx context.Context
@@ -173,7 +173,7 @@ func TestSecondaryNetwork_Update(t *testing.T) {
 		IPv4Address             string
 		IPv4Gateway             string
 		AddressLabel            string
-		Osutil                  osutility.OSUtil
+		Osutil                  linux.OSUtil
 		networkInterfacePath    string
 	}
 	type args struct {
@@ -190,13 +190,13 @@ func TestSecondaryNetwork_Update(t *testing.T) {
 			IPv4Address             string
 			IPv4Gateway             string
 			AddressLabel            string
-			Osutil                  osutility.OSUtil
+			Osutil                  linux.OSUtil
 			networkInterfacePath    string
 		}{
 			PrimaryNetworkInterface: "eth0", IPv4Address: "100.102.1.1",
 			IPv4Gateway:          "",
 			AddressLabel:         "1",
-			Osutil:               osutility.NewDryRun(),
+			Osutil:               linux.NewDryRun(),
 			networkInterfacePath: "/etc/systemd/network/10-eth0.network.d"},
 			args: struct {
 				ctx context.Context

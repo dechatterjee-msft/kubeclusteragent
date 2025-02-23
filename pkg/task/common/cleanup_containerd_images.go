@@ -5,7 +5,7 @@ import (
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/util/cri"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 
 	"kubeclusteragent/gen/go/agent/v1alpha1"
 	"kubeclusteragent/pkg/cluster"
@@ -28,7 +28,7 @@ func (t *CleanUpK8sControlPlaneContainerdImages) Name() string {
 func (t *CleanUpK8sControlPlaneContainerdImages) Run(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	containerdClient, err := cri.NewConnection(constants.ContainerdAddress, constants.ContainerdKubernetesNamespace)
 	defer func(containerdClient cri.Client, ctx context.Context) {
@@ -70,6 +70,6 @@ func (t *CleanUpK8sControlPlaneContainerdImages) Run(ctx context.Context,
 func (t *CleanUpK8sControlPlaneContainerdImages) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

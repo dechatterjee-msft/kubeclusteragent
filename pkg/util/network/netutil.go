@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"net"
 	"os"
 	"path/filepath"
@@ -21,12 +21,12 @@ type NetworkInterface struct {
 	InterfaceType string
 	IPv4Address   string
 	IPv6Address   string
-	Osutil        osutility.OSUtil
+	Osutil        linux.OSUtil
 }
 
 const fileExits = "File exists"
 
-func NewNetworkInterface(interfaceName, interfaceType, ipv4Address, ipv6Address string, ou osutility.OSUtil) *NetworkInterface {
+func NewNetworkInterface(interfaceName, interfaceType, ipv4Address, ipv6Address string, ou linux.OSUtil) *NetworkInterface {
 	return &NetworkInterface{
 		InterfaceName: interfaceName,
 		InterfaceType: interfaceType,
@@ -116,7 +116,7 @@ type SecondaryNetworkIPv4 struct {
 	IPv4Address             string
 	IPv4Gateway             string
 	AddressLabel            string
-	Osutil                  osutility.OSUtil
+	Osutil                  linux.OSUtil
 	networkInterfacePath    string
 }
 
@@ -140,7 +140,7 @@ var mutex = &sync.Mutex{}
 func NewSecondaryNetworkIPv4(primaryNetworkInterface string, label string,
 	ipv4Address string,
 	ipv4Gateway string,
-	ou osutility.OSUtil) *SecondaryNetworkIPv4 {
+	ou linux.OSUtil) *SecondaryNetworkIPv4 {
 	interfacePath := fmt.Sprintf("%s/10-%s.network.d", NetworkFolderPath, primaryNetworkInterface)
 	return &SecondaryNetworkIPv4{
 		PrimaryNetworkInterface: primaryNetworkInterface,
@@ -175,8 +175,8 @@ func (secondaryNetwork *SecondaryNetworkIPv4) Add(ctx context.Context) error {
 		return err
 	}
 	secondaryIPFilePath := filepath.Join(secondaryNetwork.networkInterfacePath, constants.SecondaryIPfileName)
-	f, err := secondaryNetwork.Osutil.Filesystem().OpenFileWithPermission(ctx, secondaryIPFilePath, osutility.O_RDWR|osutility.O_CREATE, constants.FilePerm)
-	defer func(f *osutility.File) {
+	f, err := secondaryNetwork.Osutil.Filesystem().OpenFileWithPermission(ctx, secondaryIPFilePath, os.O_RDWR|os.O_CREATE, constants.FilePerm)
+	defer func(f *os.File) {
 		closeErr := f.Close()
 		if closeErr != nil {
 			return

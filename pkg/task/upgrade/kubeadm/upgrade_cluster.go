@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"strings"
 
 	"kubeclusteragent/pkg/constants"
@@ -30,7 +30,7 @@ func NewUpgradeCluster() *Cluster {
 func (u Cluster) Run(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(u.Name())
 	logger.Info("upgrading Kubernetes cluster using kubeadm tool", "version", clusterSpec.Version)
 	out, err := ou.Kubeadm().Upgrade(ctx, clusterSpec.Version, "all")
@@ -52,6 +52,6 @@ func (u Cluster) Run(ctx context.Context,
 func (u Cluster) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

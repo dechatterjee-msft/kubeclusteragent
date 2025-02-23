@@ -1,4 +1,4 @@
-package osutility
+package linux
 
 type OSUtil interface {
 	Exec() Exec

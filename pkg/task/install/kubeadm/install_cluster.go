@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"runtime"
 	"strings"
 	"text/template"
@@ -37,7 +37,7 @@ func (t *Cluster) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	logger.Info("Install Kubernetes cluster", "version", clusterSpec.Version)
 	ok, err := ou.Filesystem().Exists(ctx, "/etc/kubernetes/pki/ca.key")
@@ -58,18 +58,14 @@ func (t *Cluster) Run(
 	if err := ou.Filesystem().WriteFile(ctx, configFilename, contents, 0600); err != nil {
 		return fmt.Errorf("write kubeadm config file: %w", err)
 	}
-	var cmdArgs []string
 	if runtime.NumCPU() < 2 {
-		cmdArgs = append(cmdArgs, "init", "--config", configFilename, "--ignore-preflight-errors=NumCPU")
 		logger.Info("this machine has 1 CPU , still we are progressing ")
-	} else {
-		cmdArgs = append(cmdArgs, "init", "--config", configFilename)
 	}
-	_, output, err := ou.Exec().Command(ctx, "kubeadm", nil, cmdArgs...)
+	output, err := ou.Kubeadm().Install(ctx, configFilename)
 	if err != nil {
-		return fmt.Errorf("run kubeadm: %w", err)
+		return err
 	}
-	if strings.Contains(string(output), constants.KubeadmClusterSuccessfulInstallationMessage) {
+	if strings.Contains(output, constants.KubeadmClusterSuccessfulInstallationMessage) {
 		logger.Info("Kubeadm init output", "KubeadmOutput", constants.KubeadmClusterSuccessfulInstallationMessage)
 	} else {
 		err = fmt.Errorf("cluster installation failed %v", string(output))
@@ -82,7 +78,7 @@ func (t *Cluster) Run(
 func (t *Cluster) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }
 
@@ -115,11 +111,13 @@ func (t *Cluster) generateTemplate(ctx context.Context, clusterSpec *v1alpha1.Cl
 	//}
 	logger.Info("kubernetes will be installed kubernetes version", "Version", clusterSpec.Version)
 	// logger.Info("kubernetes will be installed with coredns and etcd", "Version", cpImageTags)
+	apiServerAddress := constants.PrivateIPv4Address
 	data := kubeadmTemplateData{
 		KubernetesVersion: clusterSpec.Version,
 		PodSubnet:         clusterSpec.Networking.PodSubnet,
 		ServiceSubnet:     clusterSpec.Networking.SvcSubnet,
 		ClusterName:       clusterSpec.ClusterName,
+		APIServerAddress:  apiServerAddress,
 		//DNSImageTag:       cpImageTags[constants.CoreDNSImage],
 		//EtcdImageTag:      cpImageTags[constants.EtcdImage],
 		//PauseImageTag:     cpImageTags[constants.PauseImage],
@@ -164,6 +162,13 @@ etcd:
     dataDir: /var/lib/etcd
     extraArgs:
       cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      initial-cluster-state: "new"
+      initial-advertise-peer-urls: "https://172.21.136.103:2380"
+      advertise-client-urls: "https://172.21.136.103:2379"
+      listen-peer-urls: "https://172.21.136.103:2380"
+      listen-client-urls: "https://172.21.136.103:2379"
+      heartbeat-interval: "500"       # 500ms interval
+      election-timeout: "2500"        # 2500ms timeout
 networking:
   podSubnet: "{{ .PodSubnet }}"
   serviceSubnet: "{{ .ServiceSubnet }}"

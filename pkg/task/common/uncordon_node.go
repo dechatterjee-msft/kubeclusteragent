@@ -6,7 +6,7 @@ import (
 	"kubeclusteragent/pkg/cluster"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/k8s"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type UnCordonNode struct{}
@@ -25,7 +25,7 @@ func (t *UnCordonNode) Name() string {
 func (t *UnCordonNode) Run(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	k8sUtility := k8s.K8sUtil{}
 	return k8sUtility.NodeWorkloadScheduler(ctx, "uncordon")
 }
@@ -33,6 +33,6 @@ func (t *UnCordonNode) Run(ctx context.Context,
 func (t *UnCordonNode) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

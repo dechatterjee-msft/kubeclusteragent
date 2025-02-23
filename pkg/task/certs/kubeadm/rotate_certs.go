@@ -7,7 +7,7 @@ import (
 	"kubeclusteragent/pkg/cluster"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type CertsRotation struct{}
@@ -26,7 +26,7 @@ func NewRotateCerts() *CertsRotation {
 func (u CertsRotation) Run(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(u.Name())
 	all, err := ou.Kubeadm().CertsRotateAll(ctx)
 	if err != nil {
@@ -39,6 +39,6 @@ func (u CertsRotation) Run(ctx context.Context,
 func (u CertsRotation) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

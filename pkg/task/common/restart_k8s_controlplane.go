@@ -9,7 +9,7 @@ import (
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"time"
 )
 
@@ -29,7 +29,7 @@ func (t *RestartK8sControlplane) Name() string {
 func (t *RestartK8sControlplane) Run(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	logger.Info("running k8s controlplane restart")
 	code, _, err := ou.Exec().Command(ctx, "mv", nil, []string{constants.StaticPodManifests, constants.StaticPodManifestsBkp}...)
@@ -59,6 +59,6 @@ func (t *RestartK8sControlplane) Run(ctx context.Context,
 func (t *RestartK8sControlplane) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

@@ -2,14 +2,14 @@ package k8s
 
 import (
 	"context"
-	osutil2 "kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"testing"
 	"time"
 )
 
 func TestK8sUtil_NodeWorkloadScheduler(t *testing.T) {
-	kubectlClient = &osutil2.FakeKubectl{}
-	hostUtil = &osutil2.FakeHost{}
+	kubectlClient = &linux.FakeKubectl{}
+	hostUtil = &linux.FakeHost{}
 	retryCount = 0
 	sleep = 1 * time.Millisecond
 	type args struct {
@@ -37,8 +37,8 @@ func TestK8sUtil_NodeWorkloadScheduler(t *testing.T) {
 }
 
 func TestK8sUtil_NodeWorkloadScheduler_HostError(t *testing.T) {
-	kubectlClient = &osutil2.FakeKubectl{}
-	hostUtil = &osutil2.FakeHostWithErr{}
+	kubectlClient = &linux.FakeKubectl{}
+	hostUtil = &linux.FakeHostWithErr{}
 	type args struct {
 		ctx           context.Context
 		operationName string
@@ -64,8 +64,8 @@ func TestK8sUtil_NodeWorkloadScheduler_HostError(t *testing.T) {
 }
 
 func TestK8sUtil_NodeWorkloadScheduler_KubeClientError(t *testing.T) {
-	kubectlClient = &osutil2.FakeKubectlError{}
-	hostUtil = &osutil2.FakeHost{}
+	kubectlClient = &linux.FakeKubectlError{}
+	hostUtil = &linux.FakeHost{}
 	type args struct {
 		ctx           context.Context
 		operationName string

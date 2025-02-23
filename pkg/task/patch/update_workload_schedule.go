@@ -6,7 +6,7 @@ import (
 	"kubeclusteragent/pkg/cluster"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/k8s"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type UpdateNodeWorkloadSchedule struct{}
@@ -26,7 +26,7 @@ func (t *UpdateNodeWorkloadSchedule) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	// This is only applicable for Patch request , it may happen user wants to disable the workload during cluster creation or upgrade
 	currentClusterSpec := status.GetSpec(ctx)
 	k8sUtility := k8s.K8sUtil{}
@@ -42,6 +42,6 @@ func (t *UpdateNodeWorkloadSchedule) Run(
 func (t *UpdateNodeWorkloadSchedule) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

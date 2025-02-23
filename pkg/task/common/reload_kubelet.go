@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 
 	"kubeclusteragent/gen/go/agent/v1alpha1"
 	"kubeclusteragent/pkg/cluster"
@@ -27,7 +27,7 @@ func (t *KubeletReload) Name() string {
 func (t *KubeletReload) Run(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	logger.Info("Running kubelet reload task")
 	err := ou.Systemd().DaemonReload(ctx)
@@ -44,6 +44,6 @@ func (t *KubeletReload) Run(ctx context.Context,
 func (t *KubeletReload) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

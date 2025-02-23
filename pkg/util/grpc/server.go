@@ -111,7 +111,7 @@ func (server *Server) StartWithMetricsServer(ctx context.Context, serverCertFile
 		<-ctx.Done()
 		var clusterStatus cluster.Status = &cluster.LiveStatus{}
 		currentClusterStatus := clusterStatus.GetStatus(ctx)
-		logger.Info("currently agent is in phase", "current phase", currentClusterStatus.Phase)
+		logger.Info("currently agent phase", "phase", currentClusterStatus.Phase)
 		if currentClusterStatus.Phase == constants.ClusterPhaseDeleting ||
 			currentClusterStatus.Phase == constants.ClusterPhaseProvisioning ||
 			currentClusterStatus.Phase == constants.ClusterPhaseUpgrading ||

@@ -4,7 +4,7 @@ import (
 	"context"
 	"kubeclusteragent/gen/go/agent/v1alpha1"
 	"kubeclusteragent/pkg/cluster"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"reflect"
 	"testing"
 )
@@ -47,7 +47,7 @@ func TestRemoveTaint_Run(t1 *testing.T) {
 		ctx         context.Context
 		status      cluster.Status
 		clusterSpec *v1alpha1.ClusterSpec
-		ou          osutility.OSUtil
+		ou          linux.OSUtil
 	}
 	tests := []struct {
 		name    string
@@ -58,7 +58,7 @@ func TestRemoveTaint_Run(t1 *testing.T) {
 			ctx         context.Context
 			status      cluster.Status
 			clusterSpec *v1alpha1.ClusterSpec
-			ou          osutility.OSUtil
+			ou          linux.OSUtil
 		}{ctx: context.Background(), status: nil, clusterSpec: &v1alpha1.ClusterSpec{
 			ClusterType: "kubeadm",
 			ClusterName: "testutil-cluster",
@@ -80,7 +80,7 @@ func TestRemoveTaint_Run(t1 *testing.T) {
 			Version:          "v1.26.5+",
 			DisableWorkloads: new(bool),
 			ExtraArgs:        nil,
-		}, ou: osutility.NewDryRun(),
+		}, ou: linux.NewDryRun(),
 		}, wantErr: false,
 		},
 	}

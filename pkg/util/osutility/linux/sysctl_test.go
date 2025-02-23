@@ -1,9 +1,9 @@
-package osutility_test
+package linux_test
 
 import (
 	"context"
 	"io/fs"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"kubeclusteragent/pkg/util/osutility/packagemanager"
 	"testing"
 
@@ -14,7 +14,7 @@ import (
 type sysctlHarness struct {
 	exec *mocks.MockExec
 	fs   *mocks.MockFilesystem
-	pkg  *osutility.LiveSysctl
+	pkg  *linux.LiveSysctl
 }
 
 func newSysctlHarness(ctrl *gomock.Controller) *sysctlHarness {
@@ -23,7 +23,7 @@ func newSysctlHarness(ctrl *gomock.Controller) *sysctlHarness {
 	h := &sysctlHarness{
 		exec: exec,
 		fs:   fsUtil,
-		pkg:  osutility.NewLiveSysctl(exec, fsUtil),
+		pkg:  linux.NewLiveSysctl(exec, fsUtil),
 	}
 
 	return h

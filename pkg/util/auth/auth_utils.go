@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"kubeclusteragent/pkg/util/log/log"
-	osutil2 "kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"net/http"
 	"os"
 
@@ -88,15 +88,15 @@ func getErrorResponse(msg string) string {
 }
 
 func GenerateCerts(ctx context.Context) error {
-	exec := osutil2.NewLiveExec()
+	exec := linux.NewLiveExec()
 
 	// generating ext.cnf file with extensions
-	err := osutil2.NewLiveFilesystem().WriteFile(ctx, generatedServerExtFilePath, []byte(serverExtFileContents), 0644)
+	err := linux.NewLiveFilesystem().WriteFile(ctx, generatedServerExtFilePath, []byte(serverExtFileContents), 0644)
 	if err != nil {
 		return fmt.Errorf("error creating ext.cnf file: %w", err)
 	}
 
-	openssl := osutil2.NewLiveOpenssl(exec)
+	openssl := linux.NewLiveOpenssl(exec)
 	// generating CAs private key and self signed certificate
 	err = openssl.GenerateCertKeyPair(ctx, defaultDaysUntilExpiry, generatedCAKeyFilePath, GeneratedCACertFilePath, certSubjContents)
 	if err != nil {

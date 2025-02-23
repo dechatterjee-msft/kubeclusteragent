@@ -7,7 +7,7 @@ import (
 	"kubeclusteragent/pkg/cluster"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type Operation struct {
@@ -15,7 +15,7 @@ type Operation struct {
 	preTasks      []task.Task
 	tasks         []task.Task
 	postTasks     []task.Task
-	osUtil        osutility.OSUtil
+	osUtil        linux.OSUtil
 	clusterStatus cluster.Status
 	clusterSpec   *v1alpha1.ClusterSpec
 }

@@ -1,4 +1,4 @@
-package osutility
+package linux
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	"io/ioutil"
-	"kubeclusteragent/pkg/util/testutil"
 	"os"
 	"path/filepath"
 	"strings"

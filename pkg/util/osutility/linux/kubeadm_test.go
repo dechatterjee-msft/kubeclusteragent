@@ -1,4 +1,4 @@
-package osutility
+package linux
 
 import (
 	"github.com/stretchr/testify/assert"

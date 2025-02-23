@@ -4,14 +4,14 @@ import (
 	"kubeclusteragent/pkg/operations"
 	"kubeclusteragent/pkg/task"
 	k3sInstall "kubeclusteragent/pkg/task/install/k3s"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 func buildInstallOptions(options ...operations.Option) operations.TaskDetails {
 	current := operations.TaskDetails{
 		Tasks:     []task.Task{k3sInstall.NewInstallCluster()},
 		PostTasks: []task.Task{k3sInstall.NewInstallCNI()},
-		OsUtil:    osutility.New(),
+		OsUtil:    linux.New(),
 	}
 	for _, o := range options {
 		o(&current)
@@ -25,7 +25,7 @@ func buildUpgradeOptions(options ...operations.Option) operations.TaskDetails {
 		Tasks: []task.Task{
 			k3sInstall.NewInstallCluster(),
 		},
-		OsUtil: osutility.New(),
+		OsUtil: linux.New(),
 	}
 	for _, o := range options {
 		o(&current)

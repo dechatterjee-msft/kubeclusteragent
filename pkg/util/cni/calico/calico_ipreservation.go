@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"kubeclusteragent/pkg/constants"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"text/template"
 )
 
@@ -23,7 +23,7 @@ type ipReservation struct {
 	PodIPv6 string
 }
 
-func ConfigurePodIPReservation(ctx context.Context, ou osutility.OSUtil) (string, error) {
+func ConfigurePodIPReservation(ctx context.Context, ou linux.OSUtil) (string, error) {
 	calicoIPReservation := &ipReservation{
 		PodIPv4: constants.PodIPv4Reservation,
 		PodIPv6: constants.PodIPv6Reservation,

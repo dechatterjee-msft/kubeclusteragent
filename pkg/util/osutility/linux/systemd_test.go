@@ -1,8 +1,8 @@
-package osutility_test
+package linux_test
 
 import (
 	"context"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"kubeclusteragent/pkg/util/osutility/packagemanager"
 	"testing"
 
@@ -13,14 +13,14 @@ import (
 
 type systemdHarness struct {
 	exec    *mocks.MockExec
-	systemd *osutility.LiveSystemd
+	systemd *linux.LiveSystemd
 }
 
 func newSystemHarness(ctrl *gomock.Controller) *systemdHarness {
 	exec := mocks.NewMockExec(ctrl)
 	h := &systemdHarness{
 		exec:    exec,
-		systemd: osutility.NewLiveSystemd(exec),
+		systemd: linux.NewLiveSystemd(exec),
 	}
 
 	return h

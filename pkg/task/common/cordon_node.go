@@ -7,7 +7,7 @@ import (
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/k8s"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type CordonNode struct{}
@@ -26,7 +26,7 @@ func (t *CordonNode) Name() string {
 func (t *CordonNode) Run(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	k8sUtility := k8s.K8sUtil{}
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	err := k8sUtility.NodeWorkloadScheduler(ctx, "cordon")
@@ -41,6 +41,6 @@ func (t *CordonNode) Run(ctx context.Context,
 func (t *CordonNode) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

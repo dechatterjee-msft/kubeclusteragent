@@ -9,7 +9,7 @@ import (
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type Csi struct{}
@@ -29,7 +29,7 @@ func (t *Csi) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	logger.Info("installing csi", "CSI", clusterSpec.Storage.ClusterCsi.Name, "Version", clusterSpec.Storage.ClusterCsi.Version)
 	csiPath := fmt.Sprintf("%s/%s/%s_%s.yaml", constants.RootCSIPath, clusterSpec.Storage.ClusterCsi.Name,
@@ -54,6 +54,6 @@ func (t *Csi) Run(
 func (t *Csi) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

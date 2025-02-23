@@ -8,7 +8,7 @@ import (
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/cni/cilium"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type Cni struct{}
@@ -28,7 +28,7 @@ func (t *Cni) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	logger.Info("installing cni")
 	if clusterSpec.Networking.CniName == "Calico" {
@@ -50,6 +50,6 @@ func (t *Cni) Run(
 func (t *Cni) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

@@ -1,4 +1,4 @@
-package osutility
+package linux
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"go.uber.org/multierr"
 	"kubeclusteragent/pkg/constants"
 	"math"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -128,8 +129,18 @@ func (l LiveKubeadm) GetCertsExpiry(ctx context.Context) (int, map[string]int64,
 	return evaluateOverallCertsExpiration(string(i))
 }
 
-func (l LiveKubeadm) Install(ctx context.Context, configFilePath string) (string, error) {
-	return "", nil
+func (l LiveKubeadm) Install(ctx context.Context, configFilename string) (string, error) {
+	var cmdArgs []string
+	if runtime.NumCPU() < 2 {
+		cmdArgs = append(cmdArgs, "init", "--config", configFilename, "--ignore-preflight-errors=NumCPU")
+	} else {
+		cmdArgs = append(cmdArgs, "init", "--config", configFilename)
+	}
+	_, output, err := l.cmd.Command(ctx, "kubeadm", nil, cmdArgs...)
+	if err != nil {
+		return "", fmt.Errorf("run kubeadm: %w,output :%s", err, string(output))
+	}
+	return string(output), nil
 }
 
 func (l LiveKubeadm) Upgrade(ctx context.Context, version string, ignorePreflight string) (string, error) {

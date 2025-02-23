@@ -8,7 +8,7 @@ import (
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os"
 )
 
@@ -25,7 +25,7 @@ func (c ClusterPrerequisites) Name() string {
 	return "cluster-prerequisites"
 }
 
-func (c ClusterPrerequisites) Run(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) error {
+func (c ClusterPrerequisites) Run(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou linux.OSUtil) error {
 	logger := log.From(ctx)
 	logger.Info("running kubernetes prerequisites")
 	code, _, err := ou.Exec().CommandWithNoLogging(ctx, "swapoff", nil, []string{"-a"}...)
@@ -116,6 +116,6 @@ net.ipv4.ip_forward                 = 1
 	return nil
 }
 
-func (c ClusterPrerequisites) Rollback(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) error {
+func (c ClusterPrerequisites) Rollback(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou linux.OSUtil) error {
 	return nil
 }

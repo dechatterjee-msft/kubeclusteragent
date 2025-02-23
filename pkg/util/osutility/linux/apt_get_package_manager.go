@@ -1,4 +1,4 @@
-package osutility
+package linux
 
 import (
 	"context"
@@ -9,29 +9,29 @@ import (
 	"path/filepath"
 )
 
-type FakeDnfPackageManager struct {
+type FakeAptGetPackageManager struct {
 	exec Exec
 	fs   Filesystem
 }
 
-var _ PackageManagerFactory = &FakeDnfPackageManager{}
+var _ PackageManagerFactory = &FakeAptGetPackageManager{}
 
-func NewDnfFakePackage() *FakeDnfPackageManager {
-	f := &FakeDnfPackageManager{}
+func NewAptGetFakePackage() *FakeAptGetPackageManager {
+	f := &FakeAptGetPackageManager{}
 	return f
 }
 
-func (f *FakeDnfPackageManager) Uninstall(ctx context.Context, packageNames ...string) error {
+func (f *FakeAptGetPackageManager) Uninstall(ctx context.Context, packageNames ...string) error {
 	return nil
 }
 
-func (f *FakeDnfPackageManager) CheckInstalled(ctx context.Context, packageName string) bool {
+func (f *FakeAptGetPackageManager) CheckInstalled(ctx context.Context, packageName string) bool {
 	logger := log.From(ctx)
 	logger.Info("Check if package is installed", "packageName", packageName)
 	return packageName != ""
 }
 
-func (f *FakeDnfPackageManager) Install(ctx context.Context, packageNames ...string) error {
+func (f *FakeAptGetPackageManager) Install(ctx context.Context, packageNames ...string) error {
 	logger := log.From(ctx)
 
 	for _, packageName := range packageNames {
@@ -41,43 +41,43 @@ func (f *FakeDnfPackageManager) Install(ctx context.Context, packageNames ...str
 	return nil
 }
 
-func (f *FakeDnfPackageManager) Update(ctx context.Context) error {
+func (f *FakeAptGetPackageManager) Update(ctx context.Context) error {
 	logger := log.From(ctx)
 	logger.Info("Updating packages")
 
 	return nil
 }
 
-func (f *FakeDnfPackageManager) AddKey(ctx context.Context, urlStr string) error {
+func (f *FakeAptGetPackageManager) AddKey(ctx context.Context, urlStr string) error {
 	logger := log.From(ctx)
 	logger.Info("Adding signing key", "url", urlStr)
 
 	return nil
 }
 
-func (f *FakeDnfPackageManager) AddRepository(ctx context.Context, repository, filename string) error {
+func (f *FakeAptGetPackageManager) AddRepository(ctx context.Context, repository, filename string) error {
 	logger := log.From(ctx)
 	logger.Info("Adding package repository", "repository", repository, "filename", filename)
 
 	return nil
 }
 
-func (f *FakeDnfPackageManager) RemoveRepository(ctx context.Context, repository, filename string) error {
+func (f *FakeAptGetPackageManager) RemoveRepository(ctx context.Context, repository, filename string) error {
 	logger := log.From(ctx)
 	logger.Info("Adding package repository", "repository", repository, "filename", filename)
 
 	return nil
 }
 
-type LiveDnfPackageManager struct {
+type LiveAptGetPackageManager struct {
 	exec Exec
 	fs   Filesystem
 }
 
-var _ PackageManagerFactory = &LiveDnfPackageManager{}
+var _ PackageManagerFactory = &LiveAptGetPackageManager{}
 
-func NewDnfLivePackageManager(execUtil Exec, fsUtil Filesystem) *LiveDnfPackageManager {
-	f := &LiveDnfPackageManager{
+func NewAptGetLivePackageManager(execUtil Exec, fsUtil Filesystem) *LiveAptGetPackageManager {
+	f := &LiveAptGetPackageManager{
 		exec: execUtil,
 		fs:   fsUtil,
 	}
@@ -85,8 +85,8 @@ func NewDnfLivePackageManager(execUtil Exec, fsUtil Filesystem) *LiveDnfPackageM
 	return f
 }
 
-func NewDnfFakeManager(execUtil Exec, fsUtil Filesystem) *FakeDnfPackageManager {
-	f := &FakeDnfPackageManager{
+func NewFakeAptGetPackageManager(execUtil Exec, fsUtil Filesystem) *FakeAptGetPackageManager {
+	f := &FakeAptGetPackageManager{
 		exec: execUtil,
 		fs:   fsUtil,
 	}
@@ -94,7 +94,7 @@ func NewDnfFakeManager(execUtil Exec, fsUtil Filesystem) *FakeDnfPackageManager 
 	return f
 }
 
-func (f *LiveDnfPackageManager) CheckInstalled(ctx context.Context, packageName string) bool {
+func (f *LiveAptGetPackageManager) CheckInstalled(ctx context.Context, packageName string) bool {
 	logger := log.From(ctx)
 
 	if packageName == "" {
@@ -110,7 +110,7 @@ func (f *LiveDnfPackageManager) CheckInstalled(ctx context.Context, packageName 
 	return code == 0
 }
 
-func (f *LiveDnfPackageManager) Install(ctx context.Context, packageNames ...string) error {
+func (f *LiveAptGetPackageManager) Install(ctx context.Context, packageNames ...string) error {
 	logger := log.From(ctx)
 
 	logger.Info("Installing packages", "packageNames", packageNames)
@@ -133,7 +133,7 @@ func (f *LiveDnfPackageManager) Install(ctx context.Context, packageNames ...str
 	return nil
 }
 
-func (f *LiveDnfPackageManager) Uninstall(ctx context.Context, packageNames ...string) error {
+func (f *LiveAptGetPackageManager) Uninstall(ctx context.Context, packageNames ...string) error {
 	logger := log.From(ctx)
 
 	logger.Info("Uninstalling packages", "packageNames", packageNames)
@@ -151,7 +151,7 @@ func (f *LiveDnfPackageManager) Uninstall(ctx context.Context, packageNames ...s
 	return nil
 }
 
-func (f *LiveDnfPackageManager) Update(ctx context.Context) error {
+func (f *LiveAptGetPackageManager) Update(ctx context.Context) error {
 	logger := log.From(ctx)
 	logger.Info("Updating packages")
 
@@ -168,7 +168,7 @@ func (f *LiveDnfPackageManager) Update(ctx context.Context) error {
 	return nil
 }
 
-func (f *LiveDnfPackageManager) AddKey(ctx context.Context, urlStr string) error {
+func (f *LiveAptGetPackageManager) AddKey(ctx context.Context, urlStr string) error {
 	logger := log.From(ctx)
 
 	if urlStr == "" {
@@ -191,7 +191,7 @@ func (f *LiveDnfPackageManager) AddKey(ctx context.Context, urlStr string) error
 	return nil
 }
 
-func (f *LiveDnfPackageManager) AddRepository(ctx context.Context, repository, filename string) error {
+func (f *LiveAptGetPackageManager) AddRepository(ctx context.Context, repository, filename string) error {
 	logger := log.From(ctx)
 	logger.Info("Adding package repository", "repository", repository, "filename", filename)
 	dest := filepath.Join("/etc/apt/sources.list.d", filename+".list")
@@ -201,7 +201,7 @@ func (f *LiveDnfPackageManager) AddRepository(ctx context.Context, repository, f
 	return nil
 }
 
-func (f *LiveDnfPackageManager) RemoveRepository(ctx context.Context, repository, filename string) error {
+func (f *LiveAptGetPackageManager) RemoveRepository(ctx context.Context, repository, filename string) error {
 	logger := log.From(ctx)
 	logger.Info("Removing package repository", "repository", repository, "filename", filename)
 	dest := filepath.Join("/etc/apt/sources.list.d", filename+".list")

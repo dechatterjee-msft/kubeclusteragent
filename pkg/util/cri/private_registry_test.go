@@ -2,7 +2,7 @@ package cri
 
 import (
 	"context"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"reflect"
 	"testing"
 )
@@ -13,7 +13,7 @@ func TestAirgapRegistry_Add(t *testing.T) {
 		RegistryEndpoint     string
 		SkipVerify           bool
 		RegistryCapabilities []string
-		Ou                   osutility.OSUtil
+		Ou                   linux.OSUtil
 	}
 	type args struct {
 		ctx context.Context
@@ -29,12 +29,12 @@ func TestAirgapRegistry_Add(t *testing.T) {
 			RegistryEndpoint     string
 			SkipVerify           bool
 			RegistryCapabilities []string
-			Ou                   osutility.OSUtil
+			Ou                   linux.OSUtil
 		}{RegistryFQDN: "172-1-0-2.cdc.airgap",
 			RegistryEndpoint:     "",
 			SkipVerify:           true,
 			RegistryCapabilities: []string{"push,pull"},
-			Ou:                   osutility.NewDryRun()},
+			Ou:                   linux.NewDryRun()},
 			args:    struct{ ctx context.Context }{ctx: context.Background()},
 			wantErr: false},
 	}
@@ -60,7 +60,7 @@ func TestAirgapRegistry_Del(t *testing.T) {
 		RegistryEndpoint     string
 		SkipVerify           bool
 		RegistryCapabilities []string
-		Ou                   osutility.OSUtil
+		Ou                   linux.OSUtil
 	}
 	type args struct {
 		ctx context.Context
@@ -76,12 +76,12 @@ func TestAirgapRegistry_Del(t *testing.T) {
 			RegistryEndpoint     string
 			SkipVerify           bool
 			RegistryCapabilities []string
-			Ou                   osutility.OSUtil
+			Ou                   linux.OSUtil
 		}{RegistryFQDN: "172-1-0-2.cdc.airgap",
 			RegistryEndpoint:     "",
 			SkipVerify:           true,
 			RegistryCapabilities: []string{"push,pull"},
-			Ou:                   osutility.NewDryRun()},
+			Ou:                   linux.NewDryRun()},
 			args:    struct{ ctx context.Context }{ctx: context.Background()},
 			wantErr: false},
 	}
@@ -107,7 +107,7 @@ func TestAirgapRegistry_Get(t *testing.T) {
 		RegistryEndpoint     string
 		SkipVerify           bool
 		RegistryCapabilities []string
-		Ou                   osutility.OSUtil
+		Ou                   linux.OSUtil
 	}
 	type args struct {
 		ctx context.Context
@@ -124,12 +124,12 @@ func TestAirgapRegistry_Get(t *testing.T) {
 			RegistryEndpoint     string
 			SkipVerify           bool
 			RegistryCapabilities []string
-			Ou                   osutility.OSUtil
+			Ou                   linux.OSUtil
 		}{RegistryFQDN: "172-1-0-2.cdc.airgap",
 			RegistryEndpoint:     "",
 			SkipVerify:           true,
 			RegistryCapabilities: []string{"push,pull"},
-			Ou:                   osutility.NewDryRun()},
+			Ou:                   linux.NewDryRun()},
 			args:    struct{ ctx context.Context }{ctx: context.Background()},
 			wantErr: false},
 	}
@@ -160,7 +160,7 @@ func TestAirgapRegistry_Update(t *testing.T) {
 		RegistryEndpoint     string
 		SkipVerify           bool
 		RegistryCapabilities []string
-		Ou                   osutility.OSUtil
+		Ou                   linux.OSUtil
 	}
 	type args struct {
 		ctx context.Context
@@ -176,12 +176,12 @@ func TestAirgapRegistry_Update(t *testing.T) {
 			RegistryEndpoint     string
 			SkipVerify           bool
 			RegistryCapabilities []string
-			Ou                   osutility.OSUtil
+			Ou                   linux.OSUtil
 		}{RegistryFQDN: "172-1-0-2.cdc.airgap",
 			RegistryEndpoint:     "",
 			SkipVerify:           true,
 			RegistryCapabilities: []string{"push,pull"},
-			Ou:                   osutility.NewDryRun()},
+			Ou:                   linux.NewDryRun()},
 			args:    struct{ ctx context.Context }{ctx: context.Background()},
 			wantErr: false},
 	}

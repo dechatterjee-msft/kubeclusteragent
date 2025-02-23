@@ -3,7 +3,7 @@ package cri
 import (
 	"context"
 	"fmt"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os"
 	"strings"
 
@@ -119,7 +119,7 @@ func GetImageVersionForCleanup() string {
 	return "v1.26.5"
 }
 
-func LoadContainerdImages(ctx context.Context, ou osutility.OSUtil, logger logr.Logger) error {
+func LoadContainerdImages(ctx context.Context, ou linux.OSUtil, logger logr.Logger) error {
 	err := os.Chdir(imagePath)
 	if err != nil {
 		return err

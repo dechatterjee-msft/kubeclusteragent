@@ -8,7 +8,7 @@ import (
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os/user"
 )
 
@@ -25,7 +25,7 @@ func (t CurrentUserKubeconfig) Name() string {
 	return "current-user-kubeconfig"
 }
 
-func (t CurrentUserKubeconfig) Run(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) error {
+func (t CurrentUserKubeconfig) Run(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	currentUser, err := user.Current()
 	if err != nil {
@@ -43,6 +43,6 @@ func (t CurrentUserKubeconfig) Run(ctx context.Context, status cluster.Status, c
 	return nil
 }
 
-func (t CurrentUserKubeconfig) Rollback(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) error {
+func (t CurrentUserKubeconfig) Rollback(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou linux.OSUtil) error {
 	return nil
 }

@@ -9,7 +9,7 @@ import (
 	"kubeclusteragent/pkg/util/heartbeat"
 	"kubeclusteragent/pkg/util/k8s"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os"
 	"time"
 
@@ -25,6 +25,11 @@ const (
 	ClusterStatusReconcilerName = "cluster-status-reconciler"
 )
 
+var (
+	allReadyLoggedStatusCp      = true
+	allReadyLoggedStatusForNode = true
+)
+
 type ClusterStatusReconciler struct {
 	stopped  chan struct{}
 	quit     chan bool
@@ -32,7 +37,7 @@ type ClusterStatusReconciler struct {
 	client   *kubernetes.Clientset
 	interval time.Duration
 	log      logr.Logger
-	osUtil   osutility.OSUtil
+	osUtil   linux.OSUtil
 }
 
 func NewClusterStatusReconciler(ctx context.Context, kubeconfig string) (*ClusterStatusReconciler, error) {
@@ -50,7 +55,7 @@ func NewClusterStatusReconciler(ctx context.Context, kubeconfig string) (*Cluste
 		log:      logger,
 		stopped:  make(chan struct{}),
 		quit:     make(chan bool),
-		osUtil:   osutility.New(),
+		osUtil:   linux.New(),
 	}, nil
 }
 
@@ -84,9 +89,7 @@ func (csr *ClusterStatusReconciler) getClusterHeartbeat() error {
 	if csr.inProgressState(clusterStatus) || csr.notPresentOrDeleted(clusterStatus) {
 		return nil
 	}
-
 	defer status.SetStatus(csr.context, clusterStatus)
-
 	// check if the controlplane has been restarted successfully,for the cert rotation case
 	// if kubeconfig is not present
 	if !csr.checkIfKubeConfigPresent() {
@@ -102,36 +105,47 @@ func (csr *ClusterStatusReconciler) getClusterHeartbeat() error {
 	if err != nil {
 		return err
 	}
-
+	var cpReady bool
+	if clusterSpec.ClusterType == "kubeadm" {
+		cpReady, err = csr.genericControlPlaneHeartBeatInfo()
+		if err != nil {
+			conditions.MarkFalse(clusterStatus, v1alpha1.ConditionType_ControlPlaneReady, constants.ControlPlaneStatusMessageFailed, constants.ConditionSeverityError, err.Error())
+			csr.log.Error(err, "Get ControlPlane status returned err")
+		}
+	}
 	nodeready, node, err := csr.getNodeStatus()
 	if err != nil || node == nil {
 		csr.log.Error(err, "Node status returned err")
+		var errmsg string
+		if err != nil {
+			errmsg = err.Error()
+		}
 		conditions.MarkFalse(clusterStatus, v1alpha1.ConditionType_NodeReady,
 			constants.NodeReadyStatusMessageFailed,
-			constants.ConditionSeverityError, "Node is not in ready status")
+			constants.ConditionSeverityError, errmsg)
 		return err
 	}
 	clusterStatus.Unschedulable = node.Spec.Unschedulable
 	clusterStatus.KubernetesVersion = node.Status.NodeInfo.KubeletVersion
 	if !nodeready {
 		conditions.MarkFalse(clusterStatus, v1alpha1.ConditionType_NodeReady, constants.NodeReadyStatusMessageFailed, constants.ConditionSeverityError, "Node is not in ready status")
+		allReadyLoggedStatusForNode = false
 	} else {
 		conditions.MarkTrue(clusterStatus, v1alpha1.ConditionType_NodeReady)
-	}
-	var cpReady bool
-	// Triggering auto upgrade if kubeadm,kubelet have been upgraded offline without using kubecluster agent
-	if clusterSpec.ClusterType == "kubeadm" {
-		cpReady, err = csr.genericControlPlaneHeartBeatInfo()
-		if err != nil {
-			csr.log.Error(err, "Get ControlPlane status returned err")
-			return err
+		if !allReadyLoggedStatusForNode {
+			csr.log.Info("node is in ready state now")
 		}
+		allReadyLoggedStatusForNode = true
 	}
 	if !cpReady {
 		conditions.MarkFalse(clusterStatus, v1alpha1.ConditionType_ControlPlaneReady, constants.ControlPlaneStatusMessageFailed, constants.ConditionSeverityError, "Control Plane is not in ready status")
+		allReadyLoggedStatusCp = false
 	} else {
-		// csr.log.Info("ControlPlane status is ready")
 		conditions.MarkTrue(clusterStatus, v1alpha1.ConditionType_ControlPlaneReady)
+		if !allReadyLoggedStatusCp {
+			csr.log.Info("kubernetes controlplane is in ready state now")
+		}
+		allReadyLoggedStatusCp = true
 	}
 	if nodeready && cpReady {
 		conditions.MarkTrue(clusterStatus, v1alpha1.ConditionType_ClusterReady)
@@ -178,7 +192,7 @@ nodeStatus:
 			retryCount++
 			if retryCount < 5 {
 				time.Sleep(10 * time.Second)
-				csr.log.Info("retrying node status")
+				csr.log.V(1).Info("retrying node status", "retryCount", retryCount)
 				goto nodeStatus
 			}
 		}
@@ -252,20 +266,4 @@ func (csr *ClusterStatusReconciler) reinitializingKubeClient() error {
 		return err
 	}
 	return nil
-}
-
-func (csr *ClusterStatusReconciler) triggerAutoUpgrade() {
-	//if clusterSpec.Version != node.Status.NodeInfo.KubeletVersion {
-	//	csr.log.Info("cluster status reconciler detected cluster upgrade",
-	//		"current-version", clusterSpec.Version,
-	//		"desiered-version", node.Status.NodeInfo.KubeletVersion)
-	//	var kubeToolFactory kubernetestoolsfactory.KubeToolsFactory = &kubernetestoolsfactory.KubeManager{}
-	//	err = kubeToolFactory.KubernetesClusterUpgradeManager(csr.context, node.Status.NodeInfo.KubeletVersion)
-	//	if err != nil {
-	//		csr.log.Error(err, "upgrade failed with error,cluster will be automatically rolled back,"+
-	//			"reconciler will try to upgrade in the next attempt")
-	//	}
-	//} else {
-	//	clusterStatus.KubernetesVersion = node.Status.NodeInfo.KubeletVersion
-	//}
 }

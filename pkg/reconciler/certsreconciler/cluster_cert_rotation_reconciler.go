@@ -9,7 +9,7 @@ import (
 	"kubeclusteragent/pkg/tools/kubernetestoolsfactory/kubernetesproviders/kubeadm"
 	"kubeclusteragent/pkg/util/heartbeat"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"time"
 )
 
@@ -24,7 +24,7 @@ type ClusterCertsReconciler struct {
 	context  context.Context
 	interval time.Duration
 	log      logr.Logger
-	osutil   osutility.OSUtil
+	osutil   linux.OSUtil
 }
 
 func NewCertificateReconciler(ctx context.Context) (*ClusterCertsReconciler, error) {
@@ -36,7 +36,7 @@ func NewCertificateReconciler(ctx context.Context) (*ClusterCertsReconciler, err
 		log:      logger,
 		stopped:  make(chan struct{}),
 		quit:     make(chan bool),
-		osutil:   osutility.New(),
+		osutil:   linux.New(),
 	}, nil
 }
 

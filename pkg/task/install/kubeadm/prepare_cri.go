@@ -9,7 +9,7 @@ import (
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os"
 	"path/filepath"
 	"time"
@@ -19,7 +19,7 @@ type Containerd struct{}
 
 var containerdConfigFile = constants.ConfigFileLocation
 
-func (t *Containerd) Run(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) error {
+func (t *Containerd) Run(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	logger.Info("preparing containerd for kubernetes installation")
 	config, err := toml.LoadFile(containerdConfigFile)
@@ -134,7 +134,7 @@ restart:
 	return nil
 }
 
-func (t *Containerd) Rollback(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) error {
+func (t *Containerd) Rollback(ctx context.Context, status cluster.Status, clusterSpec *v1alpha1.ClusterSpec, ou linux.OSUtil) error {
 	return nil
 }
 

@@ -6,7 +6,7 @@ import (
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 
 	"kubeclusteragent/gen/go/agent/v1alpha1"
 	"kubeclusteragent/pkg/cluster"
@@ -30,7 +30,7 @@ func (r *DeleteAdminKubeConfig) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(r.Name())
 	logger.Info("deleting current user kubeconfig")
 	err := ou.Filesystem().RemoveAll(ctx, constants.AdminKubeconfigDirPath)
@@ -43,6 +43,6 @@ func (r *DeleteAdminKubeConfig) Run(
 func (r *DeleteAdminKubeConfig) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

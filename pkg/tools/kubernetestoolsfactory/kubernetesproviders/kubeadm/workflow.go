@@ -9,7 +9,7 @@ import (
 	kubeadmCreate "kubeclusteragent/pkg/task/install/kubeadm"
 	"kubeclusteragent/pkg/task/patch"
 	kubeadmUpgrade "kubeclusteragent/pkg/task/upgrade/kubeadm"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 func buildInstallOptions(options ...operations.Option) operations.TaskDetails {
@@ -32,7 +32,7 @@ func buildInstallOptions(options ...operations.Option) operations.TaskDetails {
 			//	kubeadmCreate.NewInstallCSI(),
 			kubeadmCreate.NewCurrentUserKubeconfig(),
 		},
-		OsUtil: osutility.New(),
+		OsUtil: linux.New(),
 	}
 	for _, o := range options {
 		o(&current)
@@ -60,7 +60,7 @@ func buildUpgradeOptions(options ...operations.Option) operations.TaskDetails {
 			common.NewCleanUpK8sControlPlaneContainerdImages(),
 			kubeadmCerts.NewRotateAdminCerts(),
 		},
-		OsUtil: osutility.New(),
+		OsUtil: linux.New(),
 	}
 	for _, o := range options {
 		o(&current)
@@ -75,7 +75,7 @@ func buildResetOptions(options ...operations.Option) operations.TaskDetails {
 			kubeadmReset.NewKubeadmReset(),
 			common.NewPurgeFiles(),
 		},
-		OsUtil: osutility.New(),
+		OsUtil: linux.New(),
 	}
 	for _, o := range options {
 		o(&current)
@@ -90,7 +90,7 @@ func buildCertsRotationOptions(options ...operations.Option) operations.TaskDeta
 			kubeadmCerts.NewRotateCerts(),
 			common.NewRestartK8sControlplane(),
 		},
-		OsUtil: osutility.New(),
+		OsUtil: linux.New(),
 	}
 	for _, o := range options {
 		o(&current)

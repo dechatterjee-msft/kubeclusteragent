@@ -12,7 +12,7 @@ import (
 	"kubeclusteragent/pkg/util/conditions"
 	"kubeclusteragent/pkg/util/log/log"
 	"kubeclusteragent/pkg/util/metrcis"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os"
 	"time"
 )
@@ -234,7 +234,7 @@ func (t *DefaultKubernetesProvider) GetCerts(ctx context.Context) (*v1alpha1.Clu
 	logger := log.From(ctx).WithValues("ClusterType", clusterSpec.ClusterType, "Version", clusterSpec.Version)
 	logger.Info("Retrieving kubernetes control-plane certificates")
 	metricsResponseCode = metrcis.Success
-	osUtility := osutility.New()
+	osUtility := linux.New()
 	_, m, err := osUtility.Kubeadm().GetCertsExpiry(ctx)
 	if err != nil {
 		return nil, err

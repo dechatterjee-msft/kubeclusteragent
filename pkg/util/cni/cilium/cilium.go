@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/go-logr/logr"
 	"kubeclusteragent/pkg/constants"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os"
 )
 
-func Install(ctx context.Context, logger logr.Logger, version string, ou osutility.OSUtil) error {
+func Install(ctx context.Context, logger logr.Logger, version string, ou linux.OSUtil) error {
 	ciliumDownload := fmt.Sprintf("%s/%s/%s", constants.CiliumCLIURL, version, constants.CiliumTarFileName)
 	_, err := ou.Filesystem().DownloadFileUsingHttp(ctx, ciliumDownload, fmt.Sprintf("/tmp/%s", constants.CiliumTarFileName), constants.BinaryPermissions)
 	if err != nil {

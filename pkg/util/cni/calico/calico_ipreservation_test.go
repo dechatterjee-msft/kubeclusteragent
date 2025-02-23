@@ -2,14 +2,14 @@ package calico
 
 import (
 	"context"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"testing"
 )
 
 func TestConfigurePodIPReservation(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		ou  osutility.OSUtil
+		ou  linux.OSUtil
 	}
 	tests := []struct {
 		name    string
@@ -19,8 +19,8 @@ func TestConfigurePodIPReservation(t *testing.T) {
 	}{
 		{name: "ConfigurePodIP", args: struct {
 			ctx context.Context
-			ou  osutility.OSUtil
-		}{ctx: context.Background(), ou: osutility.NewDryRun()}, want: "", wantErr: false},
+			ou  linux.OSUtil
+		}{ctx: context.Background(), ou: linux.NewDryRun()}, want: "", wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

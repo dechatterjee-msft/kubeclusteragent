@@ -2,7 +2,7 @@ package task
 
 import (
 	"context"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 
 	"kubeclusteragent/gen/go/agent/v1alpha1"
 	"kubeclusteragent/pkg/cluster"
@@ -23,9 +23,9 @@ type Task interface {
 		ctx context.Context,
 		status cluster.Status,
 		clusterSpec *v1alpha1.ClusterSpec,
-		ou osutility.OSUtil) error
+		ou linux.OSUtil) error
 	Rollback(ctx context.Context,
 		status cluster.Status,
 		clusterSpec *v1alpha1.ClusterSpec,
-		ou osutility.OSUtil) error
+		ou linux.OSUtil) error
 }

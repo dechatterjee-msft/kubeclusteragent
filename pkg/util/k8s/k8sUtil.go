@@ -8,7 +8,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"kubeclusteragent/pkg/util/log/log"
-	osutil2 "kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"strings"
 	"time"
 
@@ -20,8 +20,8 @@ type K8sUtil struct{}
 var retryCount int
 var sleep = 100 * time.Second
 
-var kubectlClient osutil2.Kubectl = osutil2.NewLiveKubectl(osutil2.NewLiveExec())
-var hostUtil osutil2.Host = &osutil2.LiveHost{}
+var kubectlClient linux.Kubectl = linux.NewLiveKubectl(linux.NewLiveExec())
+var hostUtil linux.Host = &linux.LiveHost{}
 
 func (k8s *K8sUtil) NodeWorkloadScheduler(ctx context.Context, operationName string) error {
 	logger := log.From(ctx)

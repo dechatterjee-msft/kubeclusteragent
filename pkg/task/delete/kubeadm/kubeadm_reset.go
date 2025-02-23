@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 
 	"kubeclusteragent/pkg/task"
 
@@ -30,7 +30,7 @@ func (r *Reset) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(r.Name())
 	logger.Info("resetting kubeadm")
 	code, data, err := ou.Exec().Command(ctx, "kubeadm", nil, "reset", "-f")
@@ -48,6 +48,6 @@ func (r *Reset) Run(
 func (r *Reset) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

@@ -1,4 +1,4 @@
-package osutility
+package linux
 
 import (
 	"context"

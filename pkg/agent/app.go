@@ -20,7 +20,7 @@ import (
 	"kubeclusteragent/pkg/util/go"
 	grpcutil2 "kubeclusteragent/pkg/util/grpc"
 	"kubeclusteragent/pkg/util/log/log"
-	osutil2 "kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"kubeclusteragent/pkg/util/reconcile"
 	"net"
 	"os"
@@ -113,13 +113,13 @@ func (a *App) startGRPC(ctx context.Context) (<-chan struct{}, error) {
 		// Sanity check on containerd and kubelet
 		logger.Info("agent got restarted it will check the status of containerd and kubelet...")
 		logger.Info("Agent started going next...")
-		var ou = osutil2.New()
-		err := osutil2.CheckAndStartSystemdProcess(ctx, "containerd", 3, ou)
+		var ou = linux.New()
+		err := linux.CheckAndStartSystemdProcess(ctx, "containerd", 3, ou)
 		if err != nil {
 			logger.Error(err, "containerd process failed to start")
 			return nil, err
 		}
-		err = osutil2.CheckAndStartSystemdProcess(ctx, "kubelet", 3, ou)
+		err = linux.CheckAndStartSystemdProcess(ctx, "kubelet", 3, ou)
 		if err != nil {
 			logger.Error(err, "kubelet process failed to start")
 			return nil, err

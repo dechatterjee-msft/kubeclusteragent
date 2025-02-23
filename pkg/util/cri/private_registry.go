@@ -5,7 +5,7 @@ import (
 	"github.com/pelletier/go-toml"
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"path/filepath"
 	"sync"
 )
@@ -16,7 +16,7 @@ type PrivateRegistry struct {
 	SkipVerify           bool
 	RegistryCapabilities []string
 	CertFilesLocation    []string
-	Ou                   osutility.OSUtil
+	Ou                   linux.OSUtil
 }
 
 var containerdRootDirectory = constants.ContainerdRootDirectory

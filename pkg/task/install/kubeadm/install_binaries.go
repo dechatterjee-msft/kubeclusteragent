@@ -9,7 +9,7 @@ import (
 	"io"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -37,7 +37,7 @@ func (t *Binaries) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx)
 	logger.Info("Install Kubernetes binaries")
 	if clusterSpec.Version == "" {
@@ -114,7 +114,7 @@ func (t *Binaries) Run(
 func (t *Binaries) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 
 	return nil
 }
@@ -142,7 +142,7 @@ func extractStableVersion(fullVersion string) (string, error) {
 }
 
 // Get the latest subversion for a specific Kubernetes version
-func getLatestVersion(ctx context.Context, version string, packageName string, ou osutility.OSUtil) (string, error) {
+func getLatestVersion(ctx context.Context, version string, packageName string, ou linux.OSUtil) (string, error) {
 	version = convertKubernetesVersionContainsV(version)
 	code, output, err := ou.Exec().Command(ctx, "apt-cache", nil, []string{"madison", packageName}...)
 	if err != nil {
@@ -170,7 +170,7 @@ func convertKubernetesVersionContainsV(kubernetesVersion string) string {
 	return kubernetesVersion
 }
 
-func verifyIfKubeadmAlreadyInstalled(ctx context.Context, clusterSpec *v1alpha1.ClusterSpec, ou osutility.OSUtil) (bool, error) {
+func verifyIfKubeadmAlreadyInstalled(ctx context.Context, clusterSpec *v1alpha1.ClusterSpec, ou linux.OSUtil) (bool, error) {
 	version, err := ou.Kubeadm().Version(ctx)
 	if err != nil {
 		return false, err

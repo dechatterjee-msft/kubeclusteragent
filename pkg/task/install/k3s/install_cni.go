@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"kubeclusteragent/pkg/constants"
 	"kubeclusteragent/pkg/util/log/log"
-	osutil2 "kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 
 	"kubeclusteragent/pkg/task"
 
@@ -33,7 +33,7 @@ func (t *Cni) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutil2.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithValues(
 		"Cluster Type", clusterSpec.ClusterType,
 		"Version", clusterSpec.Version,
@@ -70,13 +70,13 @@ func (t *Cni) Run(
 func (t *Cni) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutil2.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }
 
-func installManifestOrURL(ctx context.Context, manifestData, manifestFilePath, url string, ou osutil2.OSUtil) error {
+func installManifestOrURL(ctx context.Context, manifestData, manifestFilePath, url string, ou linux.OSUtil) error {
 	logger := log.From(ctx)
-	var kubectlClient osutil2.Kubectl = &osutil2.K3sLiveKubectl{}
+	var kubectlClient linux.Kubectl = &linux.K3sLiveKubectl{}
 	manifestToApply := ""
 	if url != "" {
 		manifestToApply = url

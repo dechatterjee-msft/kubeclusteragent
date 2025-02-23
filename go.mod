@@ -3,7 +3,6 @@ module kubeclusteragent
 go 1.22
 
 require (
-	github.com/boltdb/bolt v1.3.1
 	github.com/bombsimon/logrusr/v3 v3.1.0
 	github.com/containerd/containerd v1.7.11
 	github.com/cucumber/godog v0.13.0
@@ -19,6 +18,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20220101234140-673ab2c3ae75
+	go.etcd.io/bbolt v1.3.7
 	go.uber.org/multierr v1.11.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0
 	google.golang.org/grpc v1.60.1

@@ -78,7 +78,6 @@ func Set(to *v1alpha1.ClusterStatus, condition *v1alpha1.Condition) {
 	if to == nil || condition == nil {
 		return
 	}
-
 	// Check if the new conditions already exists, and change it only if there is a status
 	// transition (otherwise we should preserve the current last transition time)-
 	conditions := to.GetConditions()

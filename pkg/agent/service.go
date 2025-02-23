@@ -11,7 +11,7 @@ import (
 	"kubeclusteragent/pkg/tools/patchtool"
 	"kubeclusteragent/pkg/util/auth"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"kubeclusteragent/pkg/util/reconcile"
 	"time"
 
@@ -267,7 +267,7 @@ func (s *LiveService) createClusterRequestPreValidation(clusterSpec *v1alpha1.Cl
 		return status.Error(codes.InvalidArgument, "cluster type cannot be empty")
 	}
 	if clusterSpec.ClusterName == "" {
-		var hostUtil osutility.Host = &osutility.LiveHost{}
+		var hostUtil linux.Host = &linux.LiveHost{}
 		hostname, err := hostUtil.GetHostname()
 		if err != nil {
 			clusterSpec.ClusterName = "kubernetes"

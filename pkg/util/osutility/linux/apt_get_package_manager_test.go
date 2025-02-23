@@ -1,10 +1,10 @@
-package osutility_test
+package linux_test
 
 import (
 	"context"
 	"errors"
 	"io/fs"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"kubeclusteragent/pkg/util/testutil"
 	"testing"
 
@@ -18,7 +18,7 @@ type any = interface{}
 type packageHarness struct {
 	exec *mocks.MockExec
 	fs   *mocks.MockFilesystem
-	pkg  *osutility.FakeAptGetPackageManager
+	pkg  *linux.FakeAptGetPackageManager
 }
 
 func newPackageHarness(ctrl *gomock.Controller) *packageHarness {
@@ -27,7 +27,7 @@ func newPackageHarness(ctrl *gomock.Controller) *packageHarness {
 	h := &packageHarness{
 		exec: exec,
 		fs:   fsUtil,
-		pkg:  osutility.NewFakeAptGetPackageManager(exec, fsUtil),
+		pkg:  linux.NewFakeAptGetPackageManager(exec, fsUtil),
 	}
 
 	return h

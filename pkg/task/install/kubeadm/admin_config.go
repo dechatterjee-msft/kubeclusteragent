@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -33,7 +33,7 @@ func (t *AdminConfig) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 
 	// Check if kube-config file exists
@@ -129,6 +129,6 @@ func (t *AdminConfig) Run(
 func (t *AdminConfig) Rollback(ctx context.Context, // nolint
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }

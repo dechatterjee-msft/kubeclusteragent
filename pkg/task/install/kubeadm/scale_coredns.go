@@ -6,7 +6,7 @@ import (
 	"kubeclusteragent/pkg/cluster"
 	"kubeclusteragent/pkg/task"
 	"kubeclusteragent/pkg/util/log/log"
-	"kubeclusteragent/pkg/util/osutility"
+	"kubeclusteragent/pkg/util/osutility/linux"
 )
 
 type Coredns struct{}
@@ -27,7 +27,7 @@ func (t *Coredns) Run(
 	ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	logger := log.From(ctx).WithName("task").WithName(t.Name())
 	response, err := ou.Kubectl().RunWithResponse(ctx, []string{"scale", "deployment", "coredns", "-n", "kube-system", "--replicas=1"}...)
 	if err != nil {
@@ -41,6 +41,6 @@ func (t *Coredns) Run(
 func (t *Coredns) Rollback(ctx context.Context,
 	status cluster.Status,
 	clusterSpec *v1alpha1.ClusterSpec,
-	ou osutility.OSUtil) error {
+	ou linux.OSUtil) error {
 	return nil
 }
